@@ -1,5 +1,5 @@
 ﻿using System.IO;
-using CodeSnippets;
+using CaptureSnippets;
 using NUnit.Framework;
 
 public class ImporterTests

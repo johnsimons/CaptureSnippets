@@ -1,6 +1,6 @@
-namespace CodeSnippets
+namespace CaptureSnippets
 {
-    public class ScribbleMessage
+    public class ErrorMessage
     {
         public string Message;
         public string File;

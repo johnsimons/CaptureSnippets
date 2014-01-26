@@ -1,20 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
-using Scribble.CodeSnippets.Models;
 
-namespace CodeSnippets
+namespace CaptureSnippets
 {
     public static class ErrorFormatter
     {
-        public static IEnumerable<ScribbleMessage> FormatIncomplete(this IEnumerable<CodeSnippet> snippets)
+        public static IEnumerable<ErrorMessage> FormatIncomplete(this IEnumerable<CodeSnippet> snippets)
         {
             return snippets.Where(s => string.IsNullOrWhiteSpace(s.Value))
                            .Select(ToNotFoundMessage);
         }
 
-        static ScribbleMessage ToNotFoundMessage(this CodeSnippet snippet)
+        static ErrorMessage ToNotFoundMessage(this CodeSnippet snippet)
         {
-            return new ScribbleMessage
+            return new ErrorMessage
             {
                 File = snippet.File,
                 LineNumber = snippet.StartRow,
@@ -22,14 +21,14 @@ namespace CodeSnippets
             };
         }
 
-        public static IEnumerable<ScribbleMessage> FormatUnused(this IEnumerable<CodeSnippet> snippets)
+        public static IEnumerable<ErrorMessage> FormatUnused(this IEnumerable<CodeSnippet> snippets)
         {
             return snippets.Select(ToUnusedMessage);
         }
 
-        static ScribbleMessage ToUnusedMessage(CodeSnippet snippet)
+        static ErrorMessage ToUnusedMessage(CodeSnippet snippet)
         {
-            return new ScribbleMessage
+            return new ErrorMessage
             {
                 File = snippet.File,
                 LineNumber = snippet.StartRow,
@@ -37,14 +36,14 @@ namespace CodeSnippets
             };
         }
 
-        public static IEnumerable<ScribbleMessage> FormatNotFound(this List<CodeSnippetReference> snippets)
+        public static IEnumerable<ErrorMessage> FormatNotFound(this List<CodeSnippetReference> snippets)
         {
             return snippets.Select(ToRequiredMessage);
         }
 
-        static ScribbleMessage ToRequiredMessage(this CodeSnippetReference snippet)
+        static ErrorMessage ToRequiredMessage(this CodeSnippetReference snippet)
         {
-            return new ScribbleMessage
+            return new ErrorMessage
             {
                 File = snippet.File,
                 LineNumber = snippet.LineNumber,

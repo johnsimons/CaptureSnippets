@@ -1,4 +1,4 @@
-namespace CodeSnippets
+namespace CaptureSnippets
 {
     public class CodeSnippet
     {

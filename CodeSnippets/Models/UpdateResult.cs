@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CodeSnippets
+namespace CaptureSnippets
 {
     public class UpdateResult
     {
@@ -11,9 +11,9 @@ namespace CodeSnippets
 
         public int Files;
 
-        public List<ScribbleMessage> Warnings = new List<ScribbleMessage>();
+        public List<ErrorMessage> Warnings = new List<ErrorMessage>();
 
-        public List<ScribbleMessage> Errors = new List<ScribbleMessage>();
+        public List<ErrorMessage> Errors = new List<ErrorMessage>();
 
         public long ElapsedMilliseconds;
     }

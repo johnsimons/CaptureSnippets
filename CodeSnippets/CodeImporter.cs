@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace CodeSnippets
+namespace CaptureSnippets
 {
     public class CodeImporter
     {

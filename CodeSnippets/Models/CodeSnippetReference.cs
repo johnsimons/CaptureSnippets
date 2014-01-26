@@ -1,4 +1,4 @@
-namespace Scribble.CodeSnippets.Models
+namespace CaptureSnippets
 {
     public class CodeSnippetReference
     {

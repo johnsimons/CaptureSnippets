@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using MethodTimer;
 
-namespace CodeSnippets
+namespace CaptureSnippets
 {
     public class CodeFileParser
     {

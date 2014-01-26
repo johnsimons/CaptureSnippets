@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq;
-using CodeSnippets;
+using CaptureSnippets;
 using NUnit.Framework;
 
 [TestFixture]

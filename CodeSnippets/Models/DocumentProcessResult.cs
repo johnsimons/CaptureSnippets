@@ -1,8 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using Scribble.CodeSnippets.Models;
 
-namespace CodeSnippets
+namespace CaptureSnippets
 {
     public class DocumentProcessResult
     {

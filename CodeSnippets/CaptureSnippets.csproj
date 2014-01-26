@@ -7,8 +7,8 @@
     <ProjectGuid>{2F81FF57-F5ED-4AAE-B5C5-23F4B096B45D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeSnippets</RootNamespace>
-    <AssemblyName>CodeSnippets</AssemblyName>
+    <RootNamespace>CaptureSnippets</RootNamespace>
+    <AssemblyName>CaptureSnippets</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FodyPath>..\packages\Fody.1.19.1.0</FodyPath>
@@ -56,7 +56,7 @@
     <Compile Include="Models\CodeSnippetReference.cs" />
     <Compile Include="Models\DocumentProcessResult.cs" />
     <Compile Include="Models\FileProcessResult.cs" />
-    <Compile Include="Models\ScribbleMessage.cs" />
+    <Compile Include="Models\ErrorMessage.cs" />
     <Compile Include="Models\UpdateResult.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="StringExtensions.cs" />
@@ -66,7 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Fody.targets" />
-    <None Include="NugetAssets\CodeSnippets.nuspec">
+    <None Include="NugetAssets\CaptureSnippets.nuspec">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config">
@@ -82,9 +82,9 @@
     </ItemGroup>
     <Delete Files="@(FilesToDelete)" />
     <MakeDir Directories="$(SolutionDir)NuGetBuild" />
-    <Copy SourceFiles="$(ProjectDir)NuGetAssets\CodeSnippets.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
-    <Copy SourceFiles="$(OutputPath)CodeSnippets.dll" DestinationFolder="$(SolutionDir)NuGetBuild\Lib\NET45" />
-    <Copy SourceFiles="$(OutputPath)CodeSnippets.pdb" DestinationFolder="$(SolutionDir)NuGetBuild\Lib\NET45" />
-    <PepitaPackage.WeavingTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(OutputPath)CodeSnippets.dll" />
+    <Copy SourceFiles="$(ProjectDir)NuGetAssets\CaptureSnippets.nuspec" DestinationFolder="$(SolutionDir)NuGetBuild" />
+    <Copy SourceFiles="$(OutputPath)CaptureSnippets.dll" DestinationFolder="$(SolutionDir)NuGetBuild\Lib\NET45" />
+    <Copy SourceFiles="$(OutputPath)CaptureSnippets.pdb" DestinationFolder="$(SolutionDir)NuGetBuild\Lib\NET45" />
+    <PepitaPackage.WeavingTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(OutputPath)CaptureSnippets.dll" />
   </Target>
 </Project>

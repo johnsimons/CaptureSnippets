@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Reflection;
 
-namespace CodeSnippets
+namespace CaptureSnippets
 {
     static class MethodTimeLogger
     {

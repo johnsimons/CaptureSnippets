@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using Scribble.CodeSnippets.Models;
 
-namespace CodeSnippets
+namespace CaptureSnippets
 {
     public class FileProcessResult
     {
