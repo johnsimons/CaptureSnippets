@@ -5,17 +5,7 @@ namespace CaptureSnippets
 {
     public class DocumentProcessResult
     {
-
         public int Count;
-
-        public IEnumerable<object> Warnings = new object[0];
-
-        public IEnumerable<object> Errors = new object[0];
-
-        public bool HasMessages {
-            get { return Warnings.Any() || Errors.Any(); }
-        }
-
         public List<CodeSnippet> SnippetsUsed = new List<CodeSnippet>();
         public List<CodeSnippetReference> SnippetReferences = new List<CodeSnippetReference>();
 
@@ -24,7 +14,9 @@ namespace CaptureSnippets
             foreach (var snippet in snippets)
             {
                 if (SnippetsUsed.Any(s => s.Key == snippet.Key))
+                {
                     continue;
+                }
                
                 SnippetsUsed.Add(snippet);
             }
@@ -35,7 +27,9 @@ namespace CaptureSnippets
             foreach (var reference in references)
             {
                 if (SnippetsUsed.Any(s => s.Key == reference.Key))
+                {
                     continue;
+                }
 
                 SnippetReferences.Add(reference);
             }

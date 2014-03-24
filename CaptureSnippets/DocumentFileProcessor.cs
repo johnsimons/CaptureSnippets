@@ -63,7 +63,7 @@ namespace CaptureSnippets
         {
             var result = new FileProcessResult();
 
-            var missingKeys = CheckMissingKeys(snippets, baselineText);
+            var missingKeys = CheckMissingKeys(snippets, baselineText).ToList();
             if (missingKeys.Any())
             {
                 result.RequiredSnippets = missingKeys;
@@ -90,11 +90,11 @@ namespace CaptureSnippets
             return result;
         }
 
-        public static CodeSnippetReference[] CheckMissingKeys(IEnumerable<CodeSnippet> snippets, string baselineText)
+        public static IEnumerable<CodeSnippetReference> CheckMissingKeys(IEnumerable<CodeSnippet> snippets, string baselineText)
         {
             var foundKeys = snippets.Select(m => m.Key);
             var expectedKeys = FindExpectedKeys(baselineText);
-            return expectedKeys.Where(k => !foundKeys.Contains(k.Key)).ToArray();
+            return expectedKeys.Where(k => !foundKeys.Contains(k.Key));
         }
 
         static IEnumerable<CodeSnippetReference> FindExpectedKeys(string baselineText)
