@@ -188,7 +188,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodeSnippets\CaptureSnippets.csproj">
+    <ProjectReference Include="..\CaptureSnippets\CaptureSnippets.csproj">
       <Project>{2f81ff57-f5ed-4aae-b5c5-23f4b096b45d}</Project>
       <Name>CaptureSnippets</Name>
     </ProjectReference>
