@@ -19,7 +19,7 @@ namespace CaptureSnippets
         }
 
         [Time]
-        public ICollection<CodeSnippet> Parse(string[] filterOnExpression)
+        public List<CodeSnippet> Parse(string[] filterOnExpression)
         {
             var filesMatchingExtensions = new List<string>();
 
@@ -42,7 +42,7 @@ namespace CaptureSnippets
         }
 
         [Time]
-        public static IList<CodeSnippet> GetCodeSnippets(IEnumerable<string> codeFiles)
+        public static List<CodeSnippet> GetCodeSnippets(IEnumerable<string> codeFiles)
         {
             var codeSnippets = new List<CodeSnippet>();
 
@@ -74,11 +74,11 @@ namespace CaptureSnippets
             return innerList;
         }
 
-        static IEnumerable<CodeSnippet> GetCodeSnippetsFromFile(IList<string> lines)
+        static IEnumerable<CodeSnippet> GetCodeSnippetsFromFile(string[] lines)
         {
             var innerList = new List<CodeSnippet>();
 
-            for (var i = 0; i < lines.Count; i++)
+            for (var i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
 
@@ -113,14 +113,17 @@ namespace CaptureSnippets
                     {
                         existing.EndRow = i;
                         var count = existing.EndRow - existing.StartRow;
-                        existing.Value = string.Join(LineEnding, lines.Skip(existing.StartRow)
-                                                                  .Take(count)
-                                                                  .Where(IsNotCodeSnippetTag));
+                        var snippetLines = lines.Skip(existing.StartRow)
+                            .Take(count)
+                            .Where(IsNotCodeSnippetTag).ToList();
+                        snippetLines = snippetLines.TrimIndentation().ToList();
+                        existing.Value = string.Join(LineEnding, snippetLines);
                     }
                 }
             }
             return innerList;
         }
+
 
         static bool IsNotCodeSnippetTag(string line)
         {

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,7 +16,7 @@ namespace CaptureSnippets
             this.docsFolder = docsFolder;
         }
 
-        public DocumentProcessResult Apply(ICollection<CodeSnippet> snippets)
+        public DocumentProcessResult Apply(List<CodeSnippet> snippets)
         {
             var result = new DocumentProcessResult();
 
@@ -46,7 +45,7 @@ namespace CaptureSnippets
             return result;
         }
 
-        public static FileProcessResult Apply(ICollection<CodeSnippet> snippets, string inputFile)
+        public static FileProcessResult Apply(List<CodeSnippet> snippets, string inputFile)
         {
             var baselineText = File.ReadAllText(inputFile);
 
@@ -59,7 +58,7 @@ namespace CaptureSnippets
             return result;
         }
 
-        public static FileProcessResult ApplyToText(ICollection<CodeSnippet> snippets, string baselineText)
+        public static FileProcessResult ApplyToText(List<CodeSnippet> snippets, string baselineText)
         {
             var result = new FileProcessResult();
 
@@ -94,7 +93,7 @@ namespace CaptureSnippets
         {
             var foundKeys = snippets.Select(m => m.Key);
             var expectedKeys = FindExpectedKeys(baselineText);
-            return expectedKeys.Where(k => !foundKeys.Contains(k.Key));
+            return expectedKeys.Where(k => foundKeys.All(x => x != k.Key));
         }
 
         static IEnumerable<CodeSnippetReference> FindExpectedKeys(string baselineText)
@@ -129,89 +128,47 @@ namespace CaptureSnippets
         {
             var lookup = string.Format("<!-- import {0} -->", key);
 
-            var codeSnippet = FormatTextAsCodeSnippet(value);
+            var codeSnippet = string.Format(
+@"```
+{0}
+```", value);
 
             var builder = new StringBuilder();
             using (var reader = new StringReader(baseLineText))
             {
                 string line;
                 var eatingCode = false;
+                var eatingCodePending = false;
                 while ((line = reader.ReadLine()) != null)
                 {
+                    if (eatingCodePending)
+                    {
+                        eatingCodePending = false;
+                        if (line.IsMdCodeDelimiter())
+                        {
+                            eatingCode = true;
+                            continue;
+                        }
+                    }
                     if (eatingCode)
                     {
-                        if (line.StartsWith("    ") || line.StartsWith("\t"))
+                        if (line.IsMdCodeDelimiter())
                         {
-                            continue;   
+                            eatingCode = false;
                         }
-                        eatingCode = false;
+                        continue;
                     }
                     builder.AppendLine(line);
                     if (line.Contains(lookup))
                     {
                         builder.AppendLine(codeSnippet);
-                        eatingCode = true;
+                        eatingCodePending = true;
                     }
                 }
             }
 
             return builder.ToString().TrimTrailingNewLine();
         }
-
-        static string FormatTextAsCodeSnippet(string value)
-        {
-            var valueWithoutEndings = value.TrimEnd('\r', '\n');
-
-            var linesInFile = valueWithoutEndings
-                                      .Split(new[] { LineEnding }, StringSplitOptions.None)
-                                      .Select(l => l.Replace("\t", "    "))
-                                      .ToArray();
-
-            var whiteSpaceStartValues = linesInFile.Select(SpacesAtStartOfString)
-                                                   .Where(count => count > 0)
-                                                   .ToArray();
-
-            var minWhiteSpace = whiteSpaceStartValues.Any()
-                                    ? whiteSpaceStartValues.Min()
-                                    : 0;
-
-            return string.Join(LineEnding,
-                linesInFile.Select(l => TrimWhiteSpace(l, minWhiteSpace, 4)));
-        }
-
-        // as soon as we find a non-space character, bail out
-        static int SpacesAtStartOfString(string s)
-        {
-            if (s.Length == 0)
-                return -1;
-
-            for (var i = 0; i < s.Length; i++)
-            {
-                if (s[i] != ' ')
-                    return i;
-            }
-            return s.Length;
-        }
-
-        static string TrimWhiteSpace(string input, int removeCount, int insertCount)
-        {
-            var temp = string.Copy(input);
-            if (removeCount > 0 && temp.Length >= removeCount)
-            {
-                temp = temp.Substring(removeCount);
-            }
-
-            var sb = new StringBuilder();
-            for (var i = 0; i < insertCount; i++)
-            {
-                sb.Append(' ');
-            }
-
-            sb.Append(temp);
-
-            return sb.ToString();
-        }
-
 
     }
 }

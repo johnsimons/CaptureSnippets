@@ -6,7 +6,7 @@ using NUnit.Framework;
 public class ImportTestSuite
 {
     [Test]
-    public void RunScenerios()
+    public void RunScenarios()
     {
         var directory = @"scenarios\".ToCurrentDirectory();
         var folders = Directory.GetDirectories(directory);
@@ -26,7 +26,7 @@ public class ImportTestSuite
 
         var expected = File.ReadAllText(expectedOutput).FixNewLines();
         var fixNewLines = result.Text.FixNewLines();
-        Assert.AreEqual(expected, fixNewLines);
+        Assert.AreEqual(expected, fixNewLines,folder);
     }
 
 }

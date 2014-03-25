@@ -13,25 +13,29 @@ JSON values can be read from a string using  `<codeEntityReference>M:Newtonsoft.
 
 ### Parsing a JSON Object from text
 <!-- import LinqToJsonCreateParse -->
-    string json = @"{
-      CPU: 'Intel',
-      Drives: [
-        'DVD read/writer',
-        '500 gigabyte hard drive'
-      ]
-    }";
-    
-    JObject o = JObject.Parse(json);
+```
+string json = @"{
+  CPU: 'Intel',
+  Drives: [
+    'DVD read/writer',
+    '500 gigabyte hard drive'
+  ]
+}";
+
+JObject o = JObject.Parse(json);
+```
 
 ### Parsing a JSON Array from text
 <!-- import LinqToJsonCreateParseArray -->
-    string json = @"[
-      'Small',
-      'Medium',
-      'Large'
-    ]";
-    
-    JArray a = JArray.Parse(json);
+```
+string json = @"[
+  'Small',
+  'Medium',
+  'Large'
+]";
+
+JArray a = JArray.Parse(json);
+```
 
 ## Loading JSON from a file
 
@@ -39,11 +43,13 @@ JSON can also be loaded directly from a file using `<codeEntityReference>M:Newto
 
 ### Reading JSON from a file
 <!-- import LinqToJsonReadObject -->
-    using (StreamReader reader = File.OpenText(@"c:\person.json"))
-    {
-      JObject o = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
-      // do stuff
-    }
+```
+using (StreamReader reader = File.OpenText(@"c:\person.json"))
+{
+  JObject o = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
+  // do stuff
+}
+```
 
 #### See Also
 
