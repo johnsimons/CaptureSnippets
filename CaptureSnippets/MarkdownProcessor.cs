@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CaptureSnippets
 {
-    public class MarkdownProcessor
+    public static class MarkdownProcessor
     {
         public static ProcessResult Apply(List<Snippet> snippets, string inputFile)
         {
