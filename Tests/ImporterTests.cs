@@ -11,7 +11,7 @@ public class ImporterTests
 
         var codeFolder = Path.Combine(directory, @"source\");
         var docsFolder = Path.Combine(directory, @"docs\");
-        var result = CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
+        var result = CodeImporter.UpdateDirectory(codeFolder, new[] { "*.cs" }, docsFolder);
 
         Assert.AreEqual(14, result.Snippets);
     }
@@ -23,7 +23,7 @@ public class ImporterTests
 
         var codeFolder = Path.Combine(directory, @"source\");
         var docsFolder = Path.Combine(directory, @"docs\");
-        var result = CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
+        var result = CodeImporter.UpdateDirectory(codeFolder, new[] { "*.cs" }, docsFolder);
 
         Assert.AreEqual(1, result.Files);
     }
@@ -35,7 +35,7 @@ public class ImporterTests
 
         var codeFolder = Path.Combine(directory, @"source\");
         var docsFolder = Path.Combine(directory, @"docs\");
-        var result = CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
+        var result = CodeImporter.UpdateDirectory(codeFolder, new[] { "*.cs" }, docsFolder);
 
         Assert.AreEqual(14, result.Snippets);
     }
@@ -47,7 +47,7 @@ public class ImporterTests
 
         var codeFolder = Path.Combine(directory, @"source\");
         var docsFolder = Path.Combine(directory, @"docs\");
-        CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
+        CodeImporter.UpdateDirectory(codeFolder, new[] { "*.cs" }, docsFolder);
 
         var indexFile = Path.Combine(directory, @"docs\index.md");
         var actual = File.ReadAllText(indexFile).FixNewLines();

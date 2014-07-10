@@ -14,9 +14,7 @@ public class ValidationTests
         var codeFolder = Path.Combine(directory, @"source\");
         var docsFolder = Path.Combine(directory, @"docs\");
 
-        var result = CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
-
-        Assert.IsFalse(result.Completed);
+        Assert.Throws<ParseException>(() => CodeImporter.UpdateDirectory(codeFolder, new[] {"*.cs"}, docsFolder));
     }
 
     [Test]
@@ -28,11 +26,9 @@ public class ValidationTests
         var docsFolder = Path.Combine(directory, @"docs\");
 
         var expectedFile = Path.Combine(docsFolder, "index.md");
+        var exception = Assert.Throws<ParseException>(() => CodeImporter.UpdateDirectory(codeFolder, new[] { "*.cs" }, docsFolder));
 
-        var result = CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
-
-        var error = result.Errors.First();
-
+        var error = exception.Errors.First();
         // message explains error
         Assert.AreEqual(error.Message, "Could not find a code snippet for reference 'LinqToJsonCreateParse'");
 
@@ -44,16 +40,14 @@ public class ValidationTests
     }
 
     [Test]
-    public void When_Code_Snippet_Defined_But_Not_Used_Returns_True()
+    public void When_Code_Snippet_Defined_But_Not_Used_Does_Not_Throw()
     {
         var directory = @"data\validation\no-reference\".ToCurrentDirectory();
 
         var codeFolder = Path.Combine(directory, @"source\");
         var docsFolder = Path.Combine(directory, @"docs\");
 
-        var result = CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
-
-        Assert.True(result.Completed);
+        CodeImporter.UpdateDirectory(codeFolder, new[] { "*.cs" }, docsFolder);
     }
 
     [Test]
@@ -67,7 +61,7 @@ public class ValidationTests
 
         var expectedFile = Path.Combine(codeFolder, "code.cs");
 
-        var result = CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
+        var result = CodeImporter.UpdateDirectory(codeFolder, new[] { "*.cs" }, docsFolder);
 
         var warning = result.Warnings.First();
         // message explains error
@@ -90,9 +84,9 @@ public class ValidationTests
 
         var expectedFile = Path.Combine(codeFolder, "code.cs");
 
-        var result = CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
+        var exception = Assert.Throws<ParseException>(() => CodeImporter.UpdateDirectory(codeFolder, new[] { "*.cs" }, docsFolder));
 
-        var error = result.Errors.First();
+        var error = exception.Errors.First();
 
         // message explains error
         Assert.AreEqual(error.Message, "Code snippet reference 'ThisIsAInvalidCodeSnippet' was not closed (specify 'end code ThisIsAInvalidCodeSnippet').");
@@ -112,8 +106,7 @@ public class ValidationTests
         var codeFolder = Path.Combine(directory, @"source\");
         var docsFolder = Path.Combine(directory, @"docs\");
 
-        var result = CodeImporter.Update(codeFolder, new[] {"*.cs"}, docsFolder);
+        Assert.Throws<ParseException>(() => CodeImporter.UpdateDirectory(codeFolder, new[] { "*.cs" }, docsFolder));
 
-        Assert.False(result.Completed);
     }
 }

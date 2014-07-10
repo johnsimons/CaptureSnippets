@@ -1,13 +1,13 @@
-using System.Diagnostics;
 using System.Linq;
+using MethodTimer;
 
 namespace CaptureSnippets
 {
     public static class CodeImporter
     {
-        public static UpdateResult Update(string codeFolder, string[] extensionsToSearch, string docsFolder)
+        [Time]
+        public static UpdateResult UpdateDirectory(string codeFolder, string[] extensionsToSearch, string docsFolder)
         {
-            var stopwatch = Stopwatch.StartNew();
             var result = new UpdateResult();
 
             var codeParser = new CodeFileParser(codeFolder);
@@ -16,9 +16,10 @@ namespace CaptureSnippets
             var incompleteSnippets = snippets.Where(s => string.IsNullOrWhiteSpace(s.Value)).ToArray();
             if (incompleteSnippets.Any())
             {
-                var messages = incompleteSnippets.FormatIncomplete();
-                result.Errors.AddRange(messages);
-                return result;
+                throw new ParseException
+                {
+                    Errors = incompleteSnippets.FormatIncomplete().ToList()
+                };
             }
 
             result.Snippets = snippets.Count;
@@ -32,8 +33,10 @@ namespace CaptureSnippets
 
             if (snippetsMissed.Any())
             {
-                var messages = snippetsMissed.FormatNotFound();
-                result.Errors.AddRange(messages);
+                throw new ParseException
+                {
+                    Errors = snippetsMissed.FormatNotFound().ToList()
+                };
             }
 
             if (snippetsNotUsed.Any())
@@ -43,8 +46,6 @@ namespace CaptureSnippets
             }
 
             result.Files = processResult.Count;
-            result.Completed = !result.Errors.Any();
-            result.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
             return result;
         }
     }
