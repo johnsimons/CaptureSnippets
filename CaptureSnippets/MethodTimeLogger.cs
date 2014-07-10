@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace CaptureSnippets
 {
@@ -8,7 +7,7 @@ namespace CaptureSnippets
         public static void Log(MethodBase methodBase, long milliseconds)
         {
 #if DEBUG
-            Trace.WriteLine(string.Format("{0} took {1}ms", methodBase.Name, milliseconds));
+           System.Diagnostics.Trace.WriteLine(string.Format("{0} took {1}ms", methodBase.Name, milliseconds));
 #endif
         }
     }

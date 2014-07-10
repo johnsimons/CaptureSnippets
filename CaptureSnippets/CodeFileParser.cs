@@ -23,22 +23,43 @@ namespace CaptureSnippets
         {
             var filesMatchingExtensions = new List<string>();
 
-            var allFiles = Directory.GetFiles(codeFolder, "*.*", SearchOption.AllDirectories);
             foreach (var expression in filterOnExpression)
             {
-                try
-                {
-                    var regex = new Regex(expression);
-                    filesMatchingExtensions.AddRange(allFiles.Where(f => regex.IsMatch(f)));
-                }
-                catch (Exception)
-                {
-                    var files = Directory.GetFiles(codeFolder, expression, SearchOption.AllDirectories);
-                    filesMatchingExtensions.AddRange(files);
-                }
+                var collection = FindFromExpression(expression);
+                filesMatchingExtensions.AddRange(collection);
             }
             return GetCodeSnippets(filesMatchingExtensions.Where(x => !x.Contains(@"\obj\"))
                 .Distinct());
+        }
+
+        IEnumerable<string> FindFromExpression(string expression)
+        {
+            Regex regex;
+            if (TryGetRegex(expression, out regex))
+            {
+                var allFiles = Directory.GetFiles(codeFolder, "*.*", SearchOption.AllDirectories);
+                return allFiles.Where(f => regex.IsMatch(f));
+            }
+            return Directory.GetFiles(codeFolder, expression, SearchOption.AllDirectories);
+        }
+
+        static bool TryGetRegex(string expression, out Regex regex)
+        {
+            regex = null;
+            if (expression.StartsWith("*"))
+            {
+                return false;
+            }
+
+            try
+            {
+                regex = new Regex(expression);
+                return true;
+            }
+            catch (ArgumentException)
+            {
+            }
+            return false;
         }
 
         [Time]
