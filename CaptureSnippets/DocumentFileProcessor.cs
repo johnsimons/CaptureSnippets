@@ -7,8 +7,6 @@ namespace CaptureSnippets
 {
     public class DocumentFileProcessor
     {
-        const string LineEnding = "\r\n";
-
         string docsFolder;
 
         public DocumentFileProcessor(string docsFolder)

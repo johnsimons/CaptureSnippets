@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>f3897edd</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,17 +35,20 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ApprovalTests">
-      <HintPath>..\packages\ApprovalTests.3.0.5\lib\net40\ApprovalTests.dll</HintPath>
+    <Reference Include="ApprovalTests, Version=3.0.0.0, Culture=neutral, PublicKeyToken=11bd7d124fc62e0f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ApprovalTests.3.0.7\lib\net40\ApprovalTests.dll</HintPath>
     </Reference>
-    <Reference Include="ApprovalUtilities">
-      <HintPath>..\packages\ApprovalUtilities.3.0.5\lib\net35\ApprovalUtilities.dll</HintPath>
+    <Reference Include="ApprovalUtilities, Version=3.0.0.0, Culture=neutral, PublicKeyToken=11bd7d124fc62e0f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ApprovalUtilities.3.0.7\lib\net35\ApprovalUtilities.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="ObjectApproval">
-      <HintPath>..\packages\ObjectApproval.0.1.4\Lib\NET40\ObjectApproval.dll</HintPath>
+    <Reference Include="ObjectApproval, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\ObjectApproval.0.2.1\Lib\NET40\ObjectApproval.dll</HintPath>
     </Reference>
     <Reference Include="Resourcer">
       <HintPath>..\packages\Resourcer.Fody.1.2.0.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\Resourcer.dll</HintPath>
@@ -220,11 +224,11 @@
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Fody.1.22.1\build\Fody.targets" Condition="Exists('..\packages\Fody.1.22.1\build\Fody.targets')" />
+  <Import Project="..\packages\Fody.1.24.0\build\Fody.targets" Condition="Exists('..\packages\Fody.1.24.0\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.1.22.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.22.1\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.1.24.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.24.0\build\Fody.targets'))" />
   </Target>
 </Project>

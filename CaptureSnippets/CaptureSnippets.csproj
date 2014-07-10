@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>8f89136d</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MethodTimer">
-      <HintPath>..\packages\MethodTimer.Fody.1.14.0.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\MethodTimer.dll</HintPath>
+      <HintPath>..\packages\MethodTimer.Fody.1.14.1.0\Lib\portable-net4+sl4+wp7+win8+MonoAndroid16+MonoTouch40\MethodTimer.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -84,11 +85,11 @@
     <Copy SourceFiles="$(OutputPath)CaptureSnippets.pdb" DestinationFolder="$(SolutionDir)NuGetBuild\Lib\NET45" />
     <PepitaPackage.WeavingTask NuGetBuildDirectory="$(SolutionDir)NuGetBuild" MetadataAssembly="$(OutputPath)CaptureSnippets.dll" />
   </Target>
-  <Import Project="..\packages\Fody.1.22.1\build\Fody.targets" Condition="Exists('..\packages\Fody.1.22.1\build\Fody.targets')" />
+  <Import Project="..\packages\Fody.1.24.0\build\Fody.targets" Condition="Exists('..\packages\Fody.1.24.0\build\Fody.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Fody.1.22.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.22.1\build\Fody.targets'))" />
+    <Error Condition="!Exists('..\packages\Fody.1.24.0\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.24.0\build\Fody.targets'))" />
   </Target>
 </Project>
