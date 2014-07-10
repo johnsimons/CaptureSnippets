@@ -3,12 +3,11 @@ using System.Linq;
 
 namespace CaptureSnippets
 {
-    public class CodeImporter
+    public static class CodeImporter
     {
         public static UpdateResult Update(string codeFolder, string[] extensionsToSearch, string docsFolder)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            var stopwatch = Stopwatch.StartNew();
             var result = new UpdateResult();
 
             var codeParser = new CodeFileParser(codeFolder);
@@ -45,9 +44,7 @@ namespace CaptureSnippets
 
             result.Files = processResult.Count;
             result.Completed = !result.Errors.Any();
-            stopwatch.Stop();
             result.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-
             return result;
         }
     }
