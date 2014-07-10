@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
-using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using CaptureSnippets;
 using NUnit.Framework;
 
@@ -9,118 +10,109 @@ public class DocumentFileProcessorTests
     [Test]
     public void MissingKey()
     {
-        var codeSnippets = new[]
-            {
-                new CodeSnippet
+        var snippets = new List<Snippet>
+        {
+                new Snippet
                     {
                         Key = "FoundKey1"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey2"
                     },
             };
-        var codeSnippetReferences = DocumentFileProcessor.CheckMissingKeys(codeSnippets, "<!-- import MissingKey -->");
-        var codeSnippetReference = codeSnippetReferences.First();
-        Assert.AreEqual("MissingKey", codeSnippetReference.Key);
-        Assert.AreEqual(1, codeSnippetReference.LineNumber);
+        var exception = Assert.Throws<Exception>(() => MarkdownProcessor.CheckMissingKeys(snippets, "<!-- import MissingKey -->"));
+        ApprovalTests.Approvals.Verify(exception.Message);
     }
 
     [Test]
     public void MissingMultipleKeys()
     {
-        var codeSnippets = new[]
+        var snippets = new List<Snippet>
             {
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey1"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey2"
                     },
             };
-        var codeSnippetReferences = DocumentFileProcessor.CheckMissingKeys(codeSnippets, "<!-- import MissingKey1 -->\r\n\r\n<!-- import MissingKey2 -->");
-        var first = codeSnippetReferences.First();
-        Assert.AreEqual("MissingKey1", first.Key);
-        Assert.AreEqual(1, first.LineNumber);
-        var second = codeSnippetReferences.Skip(1).First();
-        Assert.AreEqual("MissingKey2", second.Key);
-        Assert.AreEqual(3, second.LineNumber);
+        var exception = Assert.Throws<Exception>(() => MarkdownProcessor.CheckMissingKeys(snippets, "<!-- import MissingKey1 -->\r\n\r\n<!-- import MissingKey2 -->"));
+        ApprovalTests.Approvals.Verify(exception.Message);
     }
 
     [Test]
     public void FoundKey()
     {
-        var codeSnippets = new[]
+        var snippets = new List<Snippet>
             {
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey1"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey2"
                     },
             };
-        var codeSnippetReferences = DocumentFileProcessor.CheckMissingKeys(codeSnippets, "<!-- import FoundKey2 -->");
-        Assert.IsEmpty(codeSnippetReferences);
+         MarkdownProcessor.CheckMissingKeys(snippets, "<!-- import FoundKey2 -->");
     }
 
     [Test]
     public void FoundMultipleKeys()
     {
-        var codeSnippets = new[]
+        var snippets = new List<Snippet>
             {
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey1"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey2"
                     },
             };
-        var codeSnippetReferences = DocumentFileProcessor.CheckMissingKeys(codeSnippets, "<!-- import FoundKey2 -->\r\b\n<!-- import FoundKey1 -->");
-        Assert.IsEmpty(codeSnippetReferences);
+        MarkdownProcessor.CheckMissingKeys(snippets, "<!-- import FoundKey2 -->\r\b\n<!-- import FoundKey1 -->");
     }
 
     [Test]
     public void LotsOfText()
     {
-        var codeSnippets = new[]
+        var snippets = new List<Snippet>
             {
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey1"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey2"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey4"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey7"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey2"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey5"
                     },
-                new CodeSnippet
+                new Snippet
                     {
                         Key = "FoundKey1"
                     },
             };
         var startNew = Stopwatch.StartNew();
-        var codeSnippetReferences = DocumentFileProcessor.CheckMissingKeys(codeSnippets, @"<!-- import FoundKey2 -->\r\b\n<!-- import FoundKey1 -->
+        MarkdownProcessor.CheckMissingKeys(snippets, @"<!-- import FoundKey2 -->\r\b\n<!-- import FoundKey1 -->
 dflkgmxdklfmgkdflxmg
 dflkgmxdklfmgkdflxmg
 dflkgmxdklfmgkdflxmgfkgjnfdjkgn
@@ -246,6 +238,6 @@ kdjrngkjfncgdflkgmxdklfmgkdflxmg
 dflkgmxdklfmgkdflxmg
 lkmdflkgmxdklfmgkdflxmg
 ");
-        Debug.WriteLine(startNew.ElapsedTicks);
+        Trace.WriteLine(startNew.ElapsedTicks);
     }
 }

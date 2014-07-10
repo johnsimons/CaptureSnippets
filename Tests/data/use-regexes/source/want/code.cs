@@ -27,7 +27,7 @@ namespace Newtonsoft.Json.Tests.Documentation
 {
   public class LinqToJsonTests
   {
-    // start code ThisIsAInvalidCodeSnippet
+    // start code CodeSnippet
     public void LinqToJsonBasic()
     {
       JObject o = JObject.Parse(@"{
@@ -48,5 +48,6 @@ namespace Newtonsoft.Json.Tests.Documentation
       // DVD read/writer
       // 500 gigabyte hard drive
     }
+      // end code CodeSnippet
   }
 }

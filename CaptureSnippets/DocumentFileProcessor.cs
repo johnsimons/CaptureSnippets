@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -5,99 +6,43 @@ using System.Text;
 
 namespace CaptureSnippets
 {
-    public class DocumentFileProcessor
+    public class MarkdownProcessor
     {
-        string docsFolder;
-
-        public DocumentFileProcessor(string docsFolder)
-        {
-            this.docsFolder = docsFolder;
-        }
-
-        public DocumentProcessResult Apply(List<CodeSnippet> snippets)
-        {
-            var result = new DocumentProcessResult();
-
-            var inputFiles = new[] { "*.md", "*.mdown", "*.markdown" }.SelectMany(
-              extension => Directory.GetFiles(docsFolder, extension, SearchOption.AllDirectories))
-              .ToArray();
-
-            result.Count = inputFiles.Count();
-
-            foreach (var inputFile in inputFiles)
-            {
-                var fileResult = Apply(snippets, inputFile);
-
-                if (fileResult.RequiredSnippets.Any())
-                {
-                    // give up if we can't continue
-                    result.Include(fileResult.RequiredSnippets);
-                    return result;
-                }
-
-                result.Include(fileResult.Snippets);
-
-                File.WriteAllText(inputFile, fileResult.Text);
-            }
-
-            return result;
-        }
-
-        public static FileProcessResult Apply(List<CodeSnippet> snippets, string inputFile)
+        public static ProcessResult Apply(List<Snippet> snippets, string inputFile)
         {
             var baselineText = File.ReadAllText(inputFile);
 
-            var result = ApplyToText(snippets, baselineText);
-
-            foreach (var missingKey in result.RequiredSnippets)
-            {
-                missingKey.File = inputFile;
-            }
-            return result;
+            return ApplyToText(snippets, baselineText);
         }
 
-        public static FileProcessResult ApplyToText(List<CodeSnippet> snippets, string baselineText)
+        public static ProcessResult ApplyToText(List<Snippet> availableSnippets, string markdownContent)
         {
-            var result = new FileProcessResult();
-
-            var missingKeys = CheckMissingKeys(snippets, baselineText).ToList();
-            if (missingKeys.Any())
-            {
-                result.RequiredSnippets = missingKeys;
-                result.Text = baselineText;
-                return result;
-            }
-            foreach (var snippet in snippets)
+            CheckMissingKeys(availableSnippets, markdownContent);
+            var result = new ProcessResult();
+            foreach (var snippet in availableSnippets)
             {
                 // TODO: this won't change the text 
                 // if a snippet is unchanged
                 // so we need more context
-                var output = ProcessMatch(snippet.Key, snippet.Value, baselineText);
+                var output = ProcessMatch(snippet.Key, snippet.Value, markdownContent);
 
-                if (!string.Equals(output, baselineText))
+                if (!string.Equals(output, markdownContent))
                 {
                     // we may have added in a snippet
-                    result.Snippets.Add(snippet);
+                    result.UsedSnippets.Add(snippet);
                 }
 
-                baselineText = output;
+                markdownContent = output;
             }
 
-            result.Text = baselineText;
+            result.Text = markdownContent;
             return result;
         }
 
-        public static IEnumerable<CodeSnippetReference> CheckMissingKeys(IEnumerable<CodeSnippet> snippets, string baselineText)
-        {
-            var foundKeys = snippets.Select(m => m.Key);
-            var expectedKeys = FindExpectedKeys(baselineText);
-            return expectedKeys.Where(k => foundKeys.All(x => x != k.Key));
-        }
-
-        static IEnumerable<CodeSnippetReference> FindExpectedKeys(string baselineText)
+        public static void CheckMissingKeys(List<Snippet> availableSnippets, string baselineText)
         {
             var stringReader = new StringReader(baselineText);
-
+            var stringBuilder = new StringBuilder();
             string line;
             var lineNumber = 0;
             while ((line = stringReader.ReadLine()) != null)
@@ -112,13 +57,18 @@ namespace CaptureSnippets
                     {
                         var startIndex = indexOfImportStart + 12;
                         var key = line.Substring(startIndex, indexOfImportEnd - startIndex);
-                        yield return new CodeSnippetReference
+                        if (availableSnippets.Any(x => x.Key == key))
                         {
-                            LineNumber = lineNumber,
-                            Key = key
-                        };
+                            continue;
+                        }
+                        stringBuilder.AppendFormat("Could not find a CodeSnippet for the key '{0}'. LineNumber:{1}", key, lineNumber);
+                        stringBuilder.AppendLine();
                     }
                 }
+            }
+            if (stringBuilder.Length > 0)
+            {
+                throw new Exception(stringBuilder.ToString());
             }
         }
 

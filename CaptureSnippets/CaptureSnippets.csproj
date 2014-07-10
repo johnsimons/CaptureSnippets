@@ -49,19 +49,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeFileParser.cs" />
+    <Compile Include="SnippetExtractor.cs" />
     <Compile Include="DocumentFileProcessor.cs" />
-    <Compile Include="ErrorFormatter.cs" />
-    <Compile Include="CodeImporter.cs" />
     <Compile Include="MethodTimeLogger.cs" />
     <Compile Include="Models\CodeSnippet.cs" />
-    <Compile Include="Models\CodeSnippetReference.cs" />
-    <Compile Include="Models\DocumentProcessResult.cs" />
-    <Compile Include="Models\FileProcessResult.cs" />
-    <Compile Include="Models\ErrorMessage.cs" />
-    <Compile Include="Models\UpdateResult.cs" />
+    <Compile Include="Models\ProcessResult.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ParseException.cs" />
+    <Compile Include="RegexParser.cs" />
     <Compile Include="StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -2,24 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using MethodTimer;
 
 namespace CaptureSnippets
 {
-    public class CodeFileParser
+    public class SnippetExtractor
     {
         const string LineEnding = "\r\n";
 
         string codeFolder;
 
-        public CodeFileParser(string codeFolder)
+        public SnippetExtractor(string codeFolder)
         {
             this.codeFolder = codeFolder;
         }
 
         [Time]
-        public List<CodeSnippet> Parse(string[] filterOnExpression)
+        public List<Snippet> Parse(string[] filterOnExpression)
         {
             var filesMatchingExtensions = new List<string>();
 
@@ -28,14 +29,33 @@ namespace CaptureSnippets
                 var collection = FindFromExpression(expression);
                 filesMatchingExtensions.AddRange(collection);
             }
-            return GetCodeSnippets(filesMatchingExtensions.Where(x => !x.Contains(@"\obj\"))
+            var snippets = GetSnippets(filesMatchingExtensions.Where(x => !x.Contains(@"\obj\"))
                 .Distinct());
+
+            ThrowForIncompleteSnippets(snippets);
+            return snippets;
+        }
+
+        static void ThrowForIncompleteSnippets(List<Snippet> snippets)
+        {
+            var incompleteSnippets = snippets.Where(s => string.IsNullOrWhiteSpace(s.Value)).ToList();
+            if (!incompleteSnippets.Any())
+            {
+                return;
+            }
+            var stringBuilder = new StringBuilder();
+            foreach (var incompleteSnippet in incompleteSnippets)
+            {
+                stringBuilder.AppendFormat("Code snippet reference '{0}' was not closed (specify 'end code {0}'). File:{1} LineNumber: {2}", incompleteSnippet.Key, incompleteSnippet.File, incompleteSnippet.StartRow);
+                stringBuilder.AppendLine();
+            }
+            throw new Exception(stringBuilder.ToString());
         }
 
         IEnumerable<string> FindFromExpression(string expression)
         {
             Regex regex;
-            if (TryGetRegex(expression, out regex))
+            if (RegexParser.TryGetRegex(expression, out regex))
             {
                 var allFiles = Directory.GetFiles(codeFolder, "*.*", SearchOption.AllDirectories);
                 return allFiles.Where(f => regex.IsMatch(f));
@@ -43,29 +63,11 @@ namespace CaptureSnippets
             return Directory.GetFiles(codeFolder, expression, SearchOption.AllDirectories);
         }
 
-        static bool TryGetRegex(string expression, out Regex regex)
-        {
-            regex = null;
-            if (expression.StartsWith("*"))
-            {
-                return false;
-            }
-
-            try
-            {
-                regex = new Regex(expression);
-                return true;
-            }
-            catch (ArgumentException)
-            {
-            }
-            return false;
-        }
 
         [Time]
-        public static List<CodeSnippet> GetCodeSnippets(IEnumerable<string> codeFiles)
+        public static List<Snippet> GetSnippets(IEnumerable<string> codeFiles)
         {
-            var codeSnippets = new List<CodeSnippet>();
+            var snippets = new List<Snippet>();
 
             foreach (var file in codeFiles)
             {
@@ -78,16 +80,16 @@ namespace CaptureSnippets
 
                 var lines = contents.Split(new[] {"\r\n", "\n"}, StringSplitOptions.None);
                 //Processing 
-                var innerList = GetCodeSnippetsUsingArray(lines, file);
-                codeSnippets.AddRange(innerList);
+                var innerList = GetSnippetsUsingArray(lines, file);
+                snippets.AddRange(innerList);
             }
 
-            return codeSnippets;
+            return snippets;
         }
 
-        static IEnumerable<CodeSnippet> GetCodeSnippetsUsingArray(string[] lines, string file)
+        static IEnumerable<Snippet> GetSnippetsUsingArray(string[] lines, string file)
         {
-            var innerList = GetCodeSnippetsFromFile(lines).ToArray();
+            var innerList = GetSnippetsFromFile(lines).ToArray();
             foreach (var snippet in innerList)
             {
                 snippet.File = file;
@@ -95,9 +97,9 @@ namespace CaptureSnippets
             return innerList;
         }
 
-        static IEnumerable<CodeSnippet> GetCodeSnippetsFromFile(string[] lines)
+        static IEnumerable<Snippet> GetSnippetsFromFile(string[] lines)
         {
-            var innerList = new List<CodeSnippet>();
+            var innerList = new List<Snippet>();
 
             for (var i = 0; i < lines.Length; i++)
             {
@@ -109,7 +111,7 @@ namespace CaptureSnippets
                     var startIndex = indexOfStartCode + 11;
                     var suffix = line.RemoveStart(startIndex);
                     var split = suffix.Split(new char[] { }, StringSplitOptions.RemoveEmptyEntries);
-                    innerList.Add(new CodeSnippet
+                    innerList.Add(new Snippet
                     {
                         Key = split.First(),
                         StartRow = i + 1,

@@ -1,6 +1,6 @@
 namespace CaptureSnippets
 {
-    public class CodeSnippet
+    public class Snippet
     {
         public int StartRow;
         public int EndRow;

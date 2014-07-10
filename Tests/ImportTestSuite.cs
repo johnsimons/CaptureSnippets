@@ -19,10 +19,10 @@ public class ImportTestSuite
 
     void Run(string folder, string input, string expectedOutput)
     {
-        var parser = new CodeFileParser(folder);
+        var parser = new SnippetExtractor(folder);
         var snippets = parser.Parse(new[] {".*code[.]cs"});
 
-        var result = DocumentFileProcessor.Apply(snippets, input);
+        var result = MarkdownProcessor.ApplyToText(snippets, File.ReadAllText(input));
 
         var expected = File.ReadAllText(expectedOutput).FixNewLines();
         var fixNewLines = result.Text.FixNewLines();

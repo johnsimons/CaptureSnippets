@@ -7,11 +7,11 @@ using NUnit.Framework;
 public class CodeFileParserTests
 {
     [Test]
-    public void GetCodeSnippets_ReturnsMultipleResults_AllHaveValues()
+    public void GetSnippets_ReturnsMultipleResults_AllHaveValues()
     {
         var directory = @"data\get-code-snippets\".ToCurrentDirectory();
 
-        var parser = new CodeFileParser(directory);
+        var parser = new SnippetExtractor(directory);
         var actual = parser.Parse(new[] {".*code[.]cs"});
 
         Assert.IsTrue(actual.Count > 1);
@@ -19,22 +19,22 @@ public class CodeFileParserTests
     }
 
     [Test]
-    public void GetCodeSnippets_ProvidingARegex_ChoosesAllFiles()
+    public void GetSnippets_ProvidingARegex_ChoosesAllFiles()
     {
         var directory = @"data\use-regexes\".ToCurrentDirectory();
 
-        var parser = new CodeFileParser(directory);
+        var parser = new SnippetExtractor(directory);
         var actual = parser.Parse(new[] {"[.]cs"});
 
         Assert.IsTrue(actual.Count == 2);
     }
 
     [Test]
-    public void GetCodeSnippets_ProvidingARegexWithFolder_ChoosesOneFile()
+    public void GetSnippets_ProvidingARegexWithFolder_ChoosesOneFile()
     {
         var directory = @"data\use-regexes\".ToCurrentDirectory();
 
-        var parser = new CodeFileParser(directory);
+        var parser = new SnippetExtractor(directory);
         var actual = parser.Parse(new[] {@".*want.*[.]cs"});
 
         Assert.IsTrue(actual.Count == 1);
@@ -42,11 +42,11 @@ public class CodeFileParserTests
 
 
     [Test]
-    public void GetCodeSnippets_WithNestedSnippets_ReturnsTwoValues()
+    public void GetSnippets_WithNestedSnippets_ReturnsTwoValues()
     {
         var directory = @"data\get-code-snippets\".ToCurrentDirectory();
 
-        var parser = new CodeFileParser(directory);
+        var parser = new SnippetExtractor(directory);
         var actual = parser.Parse(new[] {".*nested-code[.]cs"});
 
         Assert.AreEqual(2, actual.Count);
@@ -60,10 +60,10 @@ public class CodeFileParserTests
         var inputFile = Path.Combine(directory, @"input.md");
         var outputFile = Path.Combine(directory, @"output.md");
 
-        var parser = new CodeFileParser(directory);
+        var parser = new SnippetExtractor(directory);
         var snippets = parser.Parse(new[] {".*code[.]cs"});
 
-        var result = DocumentFileProcessor.Apply(snippets, inputFile);
+        var result = MarkdownProcessor.ApplyToText(snippets, File.ReadAllText(inputFile));
 
         var expected = File.ReadAllText(outputFile).FixNewLines();
         var actual = result.Text.FixNewLines();

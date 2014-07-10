@@ -1,3 +1,3 @@
 ﻿using System.Reflection;
-[assembly: AssemblyTitle("CodeSnippets")]
-[assembly: AssemblyProduct("CodeSnippets")]
+[assembly: AssemblyTitle("CaptureSnippets")]
+[assembly: AssemblyProduct("CaptureSnippets")]
