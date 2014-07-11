@@ -139,8 +139,9 @@ namespace CaptureSnippets
                         var snippetLines = lines.Skip(existing.StartRow)
                             .Take(count)
                             .Where(IsNotCodeSnippetTag).ToList();
-                        snippetLines = snippetLines.TrimIndentation()
+                        snippetLines = snippetLines
                             .ExcludeEmptyPaddingLines()
+                            .TrimIndentation()
                             .ToList();
                         existing.Value = string.Join(LineEnding, snippetLines);
                     }
