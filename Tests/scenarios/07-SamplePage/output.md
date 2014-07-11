@@ -20,7 +20,6 @@ string firstDrive = (string) o["Drives"][0];
 IList<string> allDrives = o["Drives"].Select(t => (string) t).ToList();
 // DVD read/writer
 // 500 gigabyte hard drive
-
 ```
 
 And we're now below the code snippet. Cool eh?
