@@ -106,9 +106,6 @@
     <None Include="scenarios\03-UpdateSimpleFileOverwritesNextLine\code.cs" />
     <None Include="scenarios\03-UpdateSimpleFileOverwritesNextLine\input.md" />
     <None Include="scenarios\03-UpdateSimpleFileOverwritesNextLine\output.md" />
-    <None Include="scenarios\04-UpdateSimpleFileWithArbitrayWhitespaceInCode\code.cs" />
-    <None Include="scenarios\04-UpdateSimpleFileWithArbitrayWhitespaceInCode\input.md" />
-    <None Include="scenarios\04-UpdateSimpleFileWithArbitrayWhitespaceInCode\output.md" />
     <None Include="scenarios\07-SamplePage\code.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

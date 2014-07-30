@@ -1,5 +1,5 @@
 ﻿
 
-start code my-code-snippet
+start code mycodesnippet
 this is some text to import
-end code my-code-snippet
+end code mycodesnippet

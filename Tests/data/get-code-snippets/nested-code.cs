@@ -11,7 +11,7 @@
         ]
       }");
 
-      // start code LinqToJsonBasic-Results
+      // start code LinqToJsonBasicResults
       string cpu = (string)o["CPU"];
       // Intel
 
@@ -21,6 +21,6 @@
       IList<string> allDrives = o["Drives"].Select(t => (string)t).ToList();
       // DVD read/writer
       // 500 gigabyte hard drive
-      // end code LinqToJsonBasic-Results
+      // end code LinqToJsonBasicResults
       // end code LinqToJsonBasic
     }

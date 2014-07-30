@@ -1,3 +1,3 @@
-﻿stArt code my-coDe-snippet
+﻿stArt code mycodesnippet
 this is some text to import
-end cOde my-code-sniPpet
+end cOde mycodesnippet

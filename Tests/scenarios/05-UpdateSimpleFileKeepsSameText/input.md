@@ -1,4 +1,4 @@
-﻿<!-- import another-code-snippet -->
+﻿<!-- import anothercodesnippet -->
 ```
 this is some text to import
 ```

@@ -1,4 +1,4 @@
-﻿<!-- imPort mY-code-snippet -->
+﻿<!-- imPort mycodesnippet -->
 ```
 this is some text to import
 ```
