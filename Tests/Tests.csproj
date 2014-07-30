@@ -79,6 +79,7 @@
     <None Include="scenarios\09-IgnoreCase\code.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Compile Include="SnippetExtractorTests.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="StringExtensionTests.cs" />
     <None Include="data\apply-snippets\input.md">

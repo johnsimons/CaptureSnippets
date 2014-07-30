@@ -78,23 +78,31 @@ namespace CaptureSnippets
                     continue;
                 }
 
-                var lines = contents.Split(new[] {"\r\n", "\n"}, StringSplitOptions.None);
-                //Processing 
-                var innerList = GetSnippetsUsingArray(lines, file);
+                var innerList = GetSnippetsFromText(contents, file);
                 snippets.AddRange(innerList);
             }
 
             return snippets;
         }
 
-        static IEnumerable<Snippet> GetSnippetsUsingArray(string[] lines, string file)
+        public static IEnumerable<Snippet> GetSnippetsFromText(string contents, string file)
         {
-            var innerList = GetSnippetsFromFile(lines).ToArray();
+            var lines = contents.Split(new[]
+            {
+                "\r\n", "\n"
+            }, StringSplitOptions.None);
+            var innerList = GetSnippetsFromFile(lines).ToList();
             foreach (var snippet in innerList)
             {
                 snippet.File = file;
+                snippet.Language = GetLanguageFromFile(file);
             }
             return innerList;
+        }
+
+        static string GetLanguageFromFile(string file)
+        {
+            return Path.GetExtension(file);
         }
 
         static IEnumerable<Snippet> GetSnippetsFromFile(string[] lines)
@@ -105,29 +113,21 @@ namespace CaptureSnippets
             {
                 var line = lines[i];
 
-                var indexOfStartCode = line.IndexOf("start code ");
-                if (indexOfStartCode != -1)
+                string startKey;
+                if (TryExtractStartKey(line, out startKey))
                 {
-                    var startIndex = indexOfStartCode + 11;
-                    var suffix = line.RemoveStart(startIndex);
-                    var split = suffix.Split(new char[] { }, StringSplitOptions.RemoveEmptyEntries);
                     innerList.Add(new Snippet
                     {
-                        Key = split.First(),
+                        Key = startKey,
                         StartRow = i + 1,
-                        Language = split.Skip(1).FirstOrDefault()
                     });
                     continue;
                 }
 
-                var indexOfEndCode = line.IndexOf("end code ");
-                if (indexOfEndCode != -1)
+                string endKey;
+                if (TryExtractEndKey(line, out endKey))
                 {
-                    var startIndex = indexOfEndCode + 9;
-                    var suffix = line.RemoveStart(startIndex);
-                    var split = suffix.Split(new char[] { }, StringSplitOptions.RemoveEmptyEntries);
-                    var key = split.First();
-                    var existing = innerList.FirstOrDefault(c => c.Key == key);
+                    var existing = innerList.FirstOrDefault(c => c.Key == endKey);
                     if (existing == null)
                     {
                         // TODO: message about failure
@@ -148,6 +148,32 @@ namespace CaptureSnippets
                 }
             }
             return innerList;
+        }
+
+        public static bool TryExtractEndKey(string line, out string key)
+        {
+            return TryExtractKey(line,"end code ", out key);
+        }
+        public static bool TryExtractStartKey(string line, out string key)
+        {
+            return TryExtractKey(line,"start code ", out key);
+        }
+
+        static bool TryExtractKey(string line, string splitter, out string key)
+        {
+            var indexOfEndCode = line.IndexOf(splitter);
+            if (indexOfEndCode != -1)
+            {
+                var startIndex = indexOfEndCode + splitter.Length;
+                var suffix = line.RemoveStart(startIndex);
+                var split = suffix.Split(new char[]
+                {
+                }, StringSplitOptions.RemoveEmptyEntries);
+                key = split.First();
+                return true;
+            }
+            key = null;
+            return false;
         }
 
 

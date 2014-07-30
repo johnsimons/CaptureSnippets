@@ -1,0 +1,10 @@
+﻿[
+    {
+        "StartRow": 2,
+        "EndRow": 3,
+        "Value": "<configSections/>",
+        "Key": "CodeKey-->",
+        "Language": "",
+        "File": ""
+    }
+]
