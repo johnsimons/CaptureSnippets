@@ -3,7 +3,7 @@
         "StartRow": 2,
         "EndRow": 3,
         "Value": "<configSections/>",
-        "Key": "CodeKey-->",
+        "Key": "CodeKey",
         "Language": "xml",
         "File": "x.xml"
     }

@@ -7,6 +7,16 @@ using ObjectApproval;
 public class StringExtensionTests
 {
     [Test]
+    public void ReadUntilNotCharacter()
+    {
+        Assert.AreEqual("Foo2", "Foo2".ReadUntilNotCharacter());
+        Assert.AreEqual("Foo2", "Foo2 ".ReadUntilNotCharacter());
+        Assert.AreEqual("Foo2", "Foo2-".ReadUntilNotCharacter());
+        Assert.AreEqual("Foo2", "Foo2 f".ReadUntilNotCharacter());
+        Assert.AreEqual("", " Foo2 f".ReadUntilNotCharacter());
+    }
+
+    [Test]
     public void TrimIndentation()
     {
         var input= new List<string>
@@ -17,6 +27,7 @@ public class StringExtensionTests
         };
         ObjectApprover.VerifyWithJson(input.TrimIndentation());
     }
+
     [Test]
     public void ExcludeEmptyPaddingLines()
     {
@@ -28,12 +39,14 @@ public class StringExtensionTests
         };
         ObjectApprover.VerifyWithJson(input.ExcludeEmptyPaddingLines());
     }
+
     [Test]
     public void ExcludeEmptyPaddingLines_empty_list()
     {
         var input= new List<string>();
         ObjectApprover.VerifyWithJson(input.ExcludeEmptyPaddingLines());
     }
+
     [Test]
     public void ExcludeEmptyPaddingLines_whitespace_list()
     {
@@ -42,6 +55,7 @@ public class StringExtensionTests
         };
         ObjectApprover.VerifyWithJson(input.ExcludeEmptyPaddingLines());
     }
+
     [Test]
     public void TrimIndentation_no_initial_padding()
     {

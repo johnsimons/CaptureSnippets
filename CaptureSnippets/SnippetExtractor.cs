@@ -171,10 +171,7 @@ namespace CaptureSnippets
             {
                 var startIndex = indexOfEndCode + splitter.Length;
                 var suffix = line.RemoveStart(startIndex);
-                var split = suffix.Split(new char[]
-                {
-                }, StringSplitOptions.RemoveEmptyEntries);
-                key = split.First();
+                key = suffix.ReadUntilNotCharacter();
                 return true;
             }
             key = null;

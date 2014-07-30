@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace CaptureSnippets
 {
@@ -17,6 +18,19 @@ namespace CaptureSnippets
                 }
                 yield return line.RemoveStart(initialPadding);
             }
+        }
+        public static string ReadUntilNotCharacter(this string line)
+        {
+            var stringBuilder = new StringBuilder();
+            foreach (var ch in line)
+            {
+                if (!Char.IsLetterOrDigit(ch))
+                {
+                    break;
+                }
+                stringBuilder.Append(ch);
+            }
+            return stringBuilder.ToString();
         }
         public static IEnumerable<string> ExcludeEmptyPaddingLines(this IEnumerable<string> snippetLines)
         {
