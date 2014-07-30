@@ -102,7 +102,12 @@ namespace CaptureSnippets
 
         static string GetLanguageFromFile(string file)
         {
-            return Path.GetExtension(file);
+            var extension = Path.GetExtension(file);
+            if (extension != null)
+            {
+                return extension.TrimStart('.');
+            }
+            return String.Empty;
         }
 
         static IEnumerable<Snippet> GetSnippetsFromFile(string[] lines)

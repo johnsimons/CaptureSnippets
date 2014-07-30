@@ -13,7 +13,7 @@ public class SnippetExtractorTests
   <!-- start code CodeKey -->
   <configSections/>
   <!-- end code CodeKey -->";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input,"");
+        var snippets = SnippetExtractor.GetSnippetsFromText(input,"x.xml");
         ObjectApprover.VerifyWithJson(snippets);
     }
 
@@ -24,7 +24,7 @@ public class SnippetExtractorTests
   <!--start code CodeKey-->
   <configSections/>
   <!--end code CodeKey-->";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input,"");
+        var snippets = SnippetExtractor.GetSnippetsFromText(input, "x.xml");
         ObjectApprover.VerifyWithJson(snippets);
     }
 }
