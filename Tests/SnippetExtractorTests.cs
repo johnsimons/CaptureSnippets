@@ -26,9 +26,7 @@ public class SnippetExtractorTests
         var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
         ObjectApprover.VerifyWithJson(snippets);
     }
-    #region startcode CodeKey
 
-    #endregion startcode CodeKey
     [Test]
     public void CanExtractFromRegion()
     {
