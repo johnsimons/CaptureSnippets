@@ -12,7 +12,7 @@ public class CodeFileParserTests
         var directory = @"data\get-code-snippets\".ToCurrentDirectory();
 
         var parser = new SnippetExtractor(directory);
-        var actual = parser.Parse(new[] {".*code[.]cs"});
+        var actual = parser.Parse(".*code[.]cs");
 
         Assert.IsTrue(actual.Count > 1);
         Assert.IsTrue(actual.All(c => !string.IsNullOrWhiteSpace(c.Value)));
@@ -24,9 +24,9 @@ public class CodeFileParserTests
         var directory = @"data\use-regexes\".ToCurrentDirectory();
 
         var parser = new SnippetExtractor(directory);
-        var actual = parser.Parse(new[] {"[.]cs"});
+        var actual = parser.Parse("[.]cs");
 
-        Assert.IsTrue(actual.Count == 2);
+        Assert.AreEqual(2, actual.Count);
     }
 
     [Test]
@@ -35,23 +35,11 @@ public class CodeFileParserTests
         var directory = @"data\use-regexes\".ToCurrentDirectory();
 
         var parser = new SnippetExtractor(directory);
-        var actual = parser.Parse(new[] {@".*want.*[.]cs"});
+        var actual = parser.Parse(@".*want.*[.]cs");
 
-        Assert.IsTrue(actual.Count == 1);
+        Assert.AreEqual(1,actual.Count);
     }
 
-
-    [Test]
-    public void GetSnippets_WithNestedSnippets_ReturnsTwoValues()
-    {
-        var directory = @"data\get-code-snippets\".ToCurrentDirectory();
-
-        var parser = new SnippetExtractor(directory);
-        var actual = parser.Parse(new[] {".*nested-code[.]cs"});
-
-        Assert.AreEqual(2, actual.Count);
-        Assert.IsTrue(actual.All(c => !string.IsNullOrWhiteSpace(c.Value)));
-    }
 
     [Test]
     public void ApplySnippets_UsingFile_MatchesExpectedResult()
@@ -61,7 +49,7 @@ public class CodeFileParserTests
         var outputFile = Path.Combine(directory, @"output.md");
 
         var parser = new SnippetExtractor(directory);
-        var snippets = parser.Parse(new[] {".*code[.]cs"});
+        var snippets = parser.Parse(".*code[.]cs");
 
         var result = MarkdownProcessor.ApplyToText(snippets, File.ReadAllText(inputFile));
 

@@ -77,7 +77,7 @@ namespace Newtonsoft.Json.Tests.Documentation
   {
     public void LinqToJsonBasic()
     {
-      // start code LinqToJsonBasic
+      // startcode LinqToJsonBasic
       JObject o = JObject.Parse(@"{
         'CPU': 'Intel',
         'Drives': [
@@ -95,12 +95,12 @@ namespace Newtonsoft.Json.Tests.Documentation
       IList<string> allDrives = o["Drives"].Select(t => (string)t).ToList();
       // DVD read/writer
       // 500 gigabyte hard drive
-      // end code LinqToJsonBasic
+      // endcode
     }
 
     public void LinqToJsonCreateNormal()
     {
-      // start code LinqToJsonCreateNormal
+      // startcode LinqToJsonCreateNormal
       JArray array = new JArray();
       JValue text = new JValue("Manual text");
       JValue date = new JValue(new DateTime(2000, 5, 23));
@@ -113,7 +113,7 @@ namespace Newtonsoft.Json.Tests.Documentation
       //   "Manual text",
       //   "2000-05-23T00:00:00"
       // ]
-      // end code LinqToJsonCreateNormal
+      // endcode
     }
 
     public class Post
@@ -131,7 +131,7 @@ namespace Newtonsoft.Json.Tests.Documentation
 
     public void LinqToJsonCreateDeclaratively()
     {
-      // start code LinqToJsonCreateDeclaratively
+      // startcode LinqToJsonCreateDeclaratively
       List<Post> posts = GetPosts();
 
       JObject rss =
@@ -183,14 +183,14 @@ namespace Newtonsoft.Json.Tests.Documentation
       //    ]
       //  }
       //}
-      // end code LinqToJsonCreateDeclaratively
+      // endcode
     }
 
     public void LinqToJsonCreateFromObject()
     {
       List<Post> posts = null;
 
-      // start code LinqToJsonCreateFromObject
+      // startcode LinqToJsonCreateFromObject
       JObject o = JObject.FromObject(new
       {
         channel = new
@@ -210,12 +210,12 @@ namespace Newtonsoft.Json.Tests.Documentation
               }
         }
       });
-      // end code LinqToJsonCreateFromObject
+      // endcode
     }
 
     public void LinqToJsonCreateParse()
     {
-      // start code LinqToJsonCreateParse
+      // startcode LinqToJsonCreateParse
       string json = @"{
         CPU: 'Intel',
         Drives: [
@@ -225,12 +225,12 @@ namespace Newtonsoft.Json.Tests.Documentation
       }";
 
       JObject o = JObject.Parse(json);
-      // end code LinqToJsonCreateParse
+      // endcode
     }
 
     public void LinqToJsonCreateParseArray()
     {
-      // start code LinqToJsonCreateParseArray
+      // startcode LinqToJsonCreateParseArray
       string json = @"[
         'Small',
         'Medium',
@@ -238,23 +238,23 @@ namespace Newtonsoft.Json.Tests.Documentation
       ]";
 
       JArray a = JArray.Parse(json);
-      // end code LinqToJsonCreateParseArray
+      // endcode
     }
 
     public void LinqToJsonReadObject()
     {
-      // start code LinqToJsonReadObject
+      // startcode LinqToJsonReadObject
       using (StreamReader reader = File.OpenText(@"c:\person.json"))
       {
         JObject o = (JObject)JToken.ReadFrom(new JsonTextReader(reader));
         // do stuff
       }
-      // end code LinqToJsonReadObject
+      // endcode
     }
 
     public void LinqToJsonSimpleQuerying()
     {
-      // start code LinqToJsonSimpleQuerying csharp
+      // startcode LinqToJsonSimpleQuerying csharp
       string json = @"{
         'channel': {
           'title': 'James Newton-King',
@@ -297,14 +297,14 @@ namespace Newtonsoft.Json.Tests.Documentation
       IList<string> categoriesText = categories.Select(c => (string)c).ToList();
       // Json.NET
       // CodePlex
-      // end code LinqToJsonSimpleQuerying
+      // endcode
     }
 
     public void LinqToJsonQuerying()
     {
       JObject rss = new JObject();
 
-      // start code LinqToJsonQuerying csharp
+      // startcode LinqToJsonQuerying csharp
       var postTitles =
         from p in rss["channel"]["item"]
         select (string)p["title"];
@@ -331,10 +331,10 @@ namespace Newtonsoft.Json.Tests.Documentation
       //Json.NET - Count: 2
       //LINQ - Count: 1
       //CodePlex - Count: 1
-      // end code LinqToJsonQuerying
+      // endcode
     }
 
-    // start code LinqToJsonDeserializeObject
+    // startcode LinqToJsonDeserializeObject
     public class Shortie
     {
       public string Original { get; set; }
@@ -342,7 +342,7 @@ namespace Newtonsoft.Json.Tests.Documentation
       public string Short { get; set; }
       public ShortieException Error { get; set; }
     }
-    // end code LinqToJsonDeserializeObject
+    // endcode
 
     public class ShortieException
     {
@@ -352,7 +352,7 @@ namespace Newtonsoft.Json.Tests.Documentation
 
     public void LinqToJsonDeserializeExample()
     {
-      // start code LinqToJsonDeserializeExample
+      // startcode LinqToJsonDeserializeExample
       string jsonText = @"{
         'short': {
           'original': 'http://www.foo.com/',
@@ -381,21 +381,21 @@ namespace Newtonsoft.Json.Tests.Documentation
 
       Console.WriteLine(shortie.Error.ErrorMessage);
       // No action taken
-      // end code LinqToJsonDeserializeExample
+      // endcode
     }
 
     public void SelectTokenSimple()
     {
       JObject o = new JObject();
 
-      // start code SelectTokenSimple
+      // startcode SelectTokenSimple
       string name = (string)o.SelectToken("Manufacturers[0].Name");
-      // end code SelectTokenSimple
+      // endcode
     }
 
     public void SelectTokenComplex()
     {
-      // start code SelectTokenComplex
+      // startcode SelectTokenComplex
       JObject o = JObject.Parse(@"{
         'Stores': [
           'Lambton Quay',
@@ -435,14 +435,14 @@ namespace Newtonsoft.Json.Tests.Documentation
 
       string productName = (string)o.SelectToken("Manufacturers[1].Products[0].Name");
       // Elbow Grease
-      // end code SelectTokenComplex
+      // endcode
     }
 
     public void SelectTokenLinq()
     {
       JObject o = new JObject();
 
-      // start code SelectTokenLinq
+      // startcode SelectTokenLinq
       IList<string> storeNames = o.SelectToken("Stores").Select(s => (string)s).ToList();
       // Lambton Quay
       // Willis Street
@@ -453,7 +453,7 @@ namespace Newtonsoft.Json.Tests.Documentation
 
       decimal totalPrice = o["Manufacturers"].Sum(m => (decimal)m.SelectToken("Products[0].Price"));
       // 149.95
-      // end code SelectTokenLinq
+      // endcode
     }
   }
 }

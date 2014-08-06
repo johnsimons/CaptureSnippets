@@ -13,7 +13,7 @@ public class StringExtensionTests
         Assert.AreEqual("Foo2", "Foo2 ".ReadUntilNotCharacter());
         Assert.AreEqual("Foo2", "Foo2-".ReadUntilNotCharacter());
         Assert.AreEqual("Foo2", "Foo2 f".ReadUntilNotCharacter());
-        Assert.AreEqual("", " Foo2 f".ReadUntilNotCharacter());
+        Assert.IsNull(" Foo2 f".ReadUntilNotCharacter());
     }
 
     [Test]

@@ -13,17 +13,30 @@ public class SnippetExtractorTests
     public void AdHock()
     {
         var input = File.ReadAllText(@"C:\Code\CaptureSnippets\Tests\bin\Debug\data\get-code-snippets\nested-code.cs");
-        var snippets = SnippetExtractor.GetSnippetsFromText(input, "x.xml");
+        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
         Debug.WriteLine(snippets);
     }
     [Test]
     public void CanExtractFromXml()
     {
         var input = @"
-  <!-- start code CodeKey -->
+  <!-- startcode CodeKey -->
   <configSections/>
-  <!-- end code CodeKey -->";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input,"x.xml");
+  <!-- endcode -->";
+        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
+        ObjectApprover.VerifyWithJson(snippets);
+    }
+    #region startcode CodeKey
+
+    #endregion startcode CodeKey
+    [Test]
+    public void CanExtractFromRegion()
+    {
+        var input = @"
+  #region CodeKey
+  The Code
+  #endregion";
+        var snippets = SnippetExtractor.GetSnippetsFromText(input,null);
         ObjectApprover.VerifyWithJson(snippets);
     }
 
@@ -31,21 +44,31 @@ public class SnippetExtractorTests
     public void CanExtractWithNoTrailingCharacters()
     {
         var input = @"
-  // start code CodeKey
+  // startcode CodeKey
   the code
-  // end code CodeKey";
+  // endcode ";
         var snippets = SnippetExtractor.GetSnippetsFromText(input,null);
         ObjectApprover.VerifyWithJson(snippets);
     }
 
     [Test]
-    public void CanExtractFromXmlMissingSpaces()
+    public void CanExtractWithMissingSpaces()
     {
         var input = @"
-  <!--start code CodeKey-->
+  <!--startcode CodeKey-->
   <configSections/>
-  <!--end code CodeKey-->";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input, "x.xml");
+  <!--endcode-->";
+        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
+        ObjectApprover.VerifyWithJson(snippets);
+    }
+    [Test]
+    public void CanExtractWithTrailingWhitespace()
+    {
+        var input = @"
+  // startcode CodeKey
+  the code
+  // endcode   ";
+        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
         ObjectApprover.VerifyWithJson(snippets);
     }
 }

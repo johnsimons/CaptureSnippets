@@ -19,6 +19,7 @@ namespace CaptureSnippets
                 yield return line.RemoveStart(initialPadding);
             }
         }
+
         public static string ReadUntilNotCharacter(this string line)
         {
             var stringBuilder = new StringBuilder();
@@ -30,8 +31,14 @@ namespace CaptureSnippets
                 }
                 stringBuilder.Append(ch);
             }
-            return stringBuilder.ToString();
+            var value = stringBuilder.ToString();
+            if (value == "")
+            {
+                return null;
+            }
+            return value;
         }
+
         public static IEnumerable<string> ExcludeEmptyPaddingLines(this IEnumerable<string> snippetLines)
         {
             var list = snippetLines.ToList();
@@ -50,10 +57,12 @@ namespace CaptureSnippets
         {
             return string.IsNullOrWhiteSpace(target);
         }
+
         public static string RemoveStart(this string target, int count)
         {
             return target.Substring(count, target.Length - count);
         }
+
         public static string RemoveStart(this string target, string toRemove)
         {
             if (target.StartsWith(toRemove))
@@ -68,6 +77,7 @@ namespace CaptureSnippets
         {
             return target.TrimEnd('\r', '\n'); 
         }
+
         public static bool IsMdCodeDelimiter(this string line)
         {
             return line.StartsWith("```");

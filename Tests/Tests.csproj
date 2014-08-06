@@ -94,9 +94,6 @@
     <None Include="data\apply-snippets\code.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="data\get-code-snippets\nested-code.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="scenarios\09-IgnoreCase\input.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -4,13 +4,13 @@ public class LinqToJsonTests
 {
     public void LinqToJsonBasic()
     {
-        // start code LinqToJsonBasic
+        // startcode LinqToJsonBasic
         JObject o = JObject.Parse(@"{
         'CPU': 'Intel',
         'Drives': [
           'DVD read/writer',
           '500 gigabyte hard drive' ]
         }");
-        // end code LinqToJsonBasic
+        // endcode 
     }
 }

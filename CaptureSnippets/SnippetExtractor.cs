@@ -11,7 +11,6 @@ namespace CaptureSnippets
     public class SnippetExtractor
     {
         const string LineEnding = "\r\n";
-
         string codeFolder;
 
         public SnippetExtractor(string codeFolder)
@@ -20,11 +19,11 @@ namespace CaptureSnippets
         }
 
         [Time]
-        public List<Snippet> Parse(string[] filterOnExpression)
+        public List<Snippet> Parse(params string[] filterOnExpressions)
         {
             var filesMatchingExtensions = new List<string>();
 
-            foreach (var expression in filterOnExpression)
+            foreach (var expression in filterOnExpressions)
             {
                 var collection = FindFromExpression(expression);
                 filesMatchingExtensions.AddRange(collection);
@@ -46,7 +45,7 @@ namespace CaptureSnippets
             var stringBuilder = new StringBuilder();
             foreach (var incompleteSnippet in incompleteSnippets)
             {
-                stringBuilder.AppendFormat("Code snippet reference '{0}' was not closed (specify 'end code {0}'). File:{1} LineNumber: {2}", incompleteSnippet.Key, incompleteSnippet.File, incompleteSnippet.StartRow);
+                stringBuilder.AppendFormat("Code snippet reference '{0}' was not closed (specify 'endcode {0}'). File:{1} LineNumber: {2}", incompleteSnippet.Key, incompleteSnippet.File, incompleteSnippet.StartRow);
                 stringBuilder.AppendLine();
             }
             throw new Exception(stringBuilder.ToString());
@@ -73,7 +72,7 @@ namespace CaptureSnippets
             {
                 //Reading 
                 var contents = File.ReadAllText(file);
-                if (!contents.Contains("start code "))
+                if (!contents.Contains("startcode "))
                 {
                     continue;
                 }
@@ -112,66 +111,100 @@ namespace CaptureSnippets
 
         static IEnumerable<Snippet> GetSnippetsFromFile(string[] lines)
         {
-            var innerList = new List<Snippet>();
-
+            string currentKey = null;
+            var startLine = 0;
+            var isInSnippet = false;
+            List<string> snippetLines = null;
+            Func<string, bool> endFunc = null;
             for (var i = 0; i < lines.Length; i++)
             {
                 var line = lines[i];
-
-                string startKey;
-                if (TryExtractStartKey(line, out startKey))
+                if (isInSnippet)
                 {
-                    innerList.Add(new Snippet
+                    if (endFunc(line))
                     {
-                        Key = startKey,
-                        StartRow = i + 1,
-                    });
-                    continue;
-                }
-
-                string endKey;
-                if (TryExtractEndKey(line, out endKey))
-                {
-                    var existing = innerList.FirstOrDefault(c => c.Key == endKey);
-                    if (existing == null)
-                    {
-                        // TODO: message about failure
-                    }
-                    else
-                    {
-                        existing.EndRow = i;
-                        var count = existing.EndRow - existing.StartRow;
-                        var snippetLines = lines.Skip(existing.StartRow)
-                            .Take(count)
-                            .Where(IsNotCodeSnippetTag).ToList();
+                        isInSnippet = false;
                         snippetLines = snippetLines
-                            .ExcludeEmptyPaddingLines()
-                            .TrimIndentation()
-                            .ToList();
-                        existing.Value = string.Join(LineEnding, snippetLines);
+                           .ExcludeEmptyPaddingLines()
+                           .TrimIndentation()
+                           .ToList();
+                        yield return new Snippet
+                        {
+                            StartRow = startLine+1,
+                            EndRow = i,
+                            Key = currentKey,
+                            Value = string.Join(LineEnding, snippetLines)
+                        };
+                        snippetLines = null;
+                        currentKey = null;
+                        continue;
+                    }
+                    snippetLines.Add(line);
+                }
+                else
+                {
+                    if (IsStartCode(line, out currentKey))
+                    {
+                        endFunc = IsEndCode;
+                        isInSnippet = true;
+                        startLine = i;
+                        snippetLines = new List<string>();
+                        continue;
+                    }
+                    if (IsStartRegion(line, out currentKey))
+                    {
+                        endFunc = IsEndRegion;
+                        isInSnippet = true;
+                        startLine = i;
+                        snippetLines = new List<string>();
                     }
                 }
             }
-            return innerList;
+            
         }
 
-        public static bool TryExtractEndKey(string line, out string key)
+        static bool IsStartCode(string line, out string key)
         {
-            return TryExtractKey(line,"end code ", out key);
-        }
-        public static bool TryExtractStartKey(string line, out string key)
-        {
-            return TryExtractKey(line,"start code ", out key);
-        }
-
-        static bool TryExtractKey(string line, string splitter, out string key)
-        {
-            var indexOfEndCode = line.IndexOf(splitter);
-            if (indexOfEndCode != -1)
+            var startCodeIndex = line.IndexOf("startcode ");
+            if (startCodeIndex != -1)
             {
-                var startIndex = indexOfEndCode + splitter.Length;
-                var suffix = line.RemoveStart(startIndex);
-                key = suffix.ReadUntilNotCharacter();
+                var startIndex = startCodeIndex + 10;
+                key = line.RemoveStart(startIndex)
+                    .ReadUntilNotCharacter();
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    var message = string.Format("Could not extract key from '{0}'.", line);
+                    throw new Exception(message);
+                }
+                return true;
+            }
+            key = null;
+            return false;
+        }
+        
+        static bool IsEndRegion(string line)
+        {
+            return line.Contains("#endregion");
+        }
+
+        static bool IsEndCode(string line)
+        {
+            return line.Contains("endcode");
+        }
+
+        static bool IsStartRegion(string line, out string key)
+        {
+            var startCodeIndex = line.IndexOf("#region ");
+            if (startCodeIndex != -1)
+            {
+                var startIndex = startCodeIndex + 8;
+                key = line.RemoveStart(startIndex);
+                key = key.ReadUntilNotCharacter();
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    var message = string.Format("Could not extract key from '{0}'.", line);
+                    throw new Exception(message);
+                }
                 return true;
             }
             key = null;
@@ -179,9 +212,5 @@ namespace CaptureSnippets
         }
 
 
-        static bool IsNotCodeSnippetTag(string line)
-        {
-            return !line.Contains("end code ") && !line.Contains("start code ");
-        }
     }
 }
