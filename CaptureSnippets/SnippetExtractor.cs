@@ -70,7 +70,13 @@ namespace CaptureSnippets
 
             foreach (var file in codeFiles)
             {
+                //Reading 
                 var contents = File.ReadAllText(file);
+                if (!contents.Contains("startcode ") && !contents.Contains("#region "))
+                {
+                    continue;
+                }
+
                 var innerList = GetSnippetsFromText(contents, file);
                 snippets.AddRange(innerList);
             }
