@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace CaptureSnippets
@@ -10,113 +9,104 @@ namespace CaptureSnippets
     {
         public static ProcessResult Apply(List<Snippet> snippets, string inputFile)
         {
-            var baselineText = File.ReadAllText(inputFile);
-
-            return ApplyToText(snippets, baselineText);
+            using (var reader = File.OpenText(inputFile))
+            {
+                return Apply(snippets, reader);
+            }
         }
 
         public static ProcessResult ApplyToText(List<Snippet> availableSnippets, string markdownContent)
         {
-            CheckMissingKeys(availableSnippets, markdownContent);
-            var result = new ProcessResult();
+            using (var reader = new StringReader(markdownContent))
+            {
+                return Apply(availableSnippets, reader);
+            }
+        }
+
+        static ProcessResult Apply(List<Snippet> availableSnippets, TextReader reader)
+        {
+            var stringBuilder = new StringBuilder();
+            var lookup = new Dictionary<string, Snippet>(StringComparer.OrdinalIgnoreCase);
             foreach (var snippet in availableSnippets)
             {
-                // TODO: this won't change the text 
-                // if a snippet is unchanged
-                // so we need more context
-                var output = ProcessMatch(snippet.Key, snippet.Value, markdownContent);
-
-                if (!string.Equals(output, markdownContent))
-                {
-                    // we may have added in a snippet
-                    result.UsedSnippets.Add(snippet);
-                }
-
-                markdownContent = output;
+                lookup[snippet.Key] = snippet;
             }
+            var result = new ProcessResult();
 
-            result.Text = markdownContent;
+            string line;
+            var eatingCode = false;
+            var eatingCodePending = false;
+            var index = 0;
+            while ((line = reader.ReadLine()) != null)
+            {
+                index++;
+                if (eatingCodePending)
+                {
+                    eatingCodePending = false;
+                    if (line.IsMdCodeDelimiter())
+                    {
+                        eatingCode = true;
+                        continue;
+                    }
+                }
+                if (eatingCode)
+                {
+                    if (line.IsMdCodeDelimiter())
+                    {
+                        eatingCode = false;
+                    }
+                    continue;
+                }
+                stringBuilder.AppendLine(line);
+
+                string key;
+                if (!TryExtractKeyFromLine(line, out key))
+                {
+                    continue;
+                }
+                Snippet codeSnippet;
+                if (!lookup.TryGetValue(key, out codeSnippet))
+                {
+                    var missingSnippet = new MissingSnippet
+                    {
+                        Key = key,
+                        Line = index
+                    };
+                    result.MissingSnippet.Add(missingSnippet);
+                    stringBuilder.AppendLine(string.Format("** Could not find key '{0}' **", key));
+                    continue;
+                }
+                var value = codeSnippet.Value;
+
+                stringBuilder.AppendLine("```");
+                stringBuilder.AppendLine(value);
+                stringBuilder.AppendLine("```");
+                eatingCodePending = true;
+                result.UsedSnippets.Add(codeSnippet);
+            }
+            result.Text = stringBuilder.ToString().TrimTrailingNewLine();
             return result;
         }
 
-        public static void CheckMissingKeys(List<Snippet> availableSnippets, string baselineText)
+        public static bool TryExtractKeyFromLine(string line, out string key)
         {
-            var stringReader = new StringReader(baselineText);
-            var stringBuilder = new StringBuilder();
-            string line;
-            var lineNumber = 0;
-            while ((line = stringReader.ReadLine()) != null)
+            var indexOfImport = line.IndexOf("<!-- import ");
+            if (indexOfImport == -1)
             {
-                lineNumber++;
-                var indexOfImportStart = line.IndexOf("<!-- import ");
-
-                if (indexOfImportStart > -1)
-                {
-                    var indexOfImportEnd = line.IndexOf(" -->");
-                    if (indexOfImportEnd > -1)
-                    {
-                        var startIndex = indexOfImportStart + 12;
-                        var key = line.Substring(startIndex, indexOfImportEnd - startIndex);
-                        if (availableSnippets.Any(x => x.Key == key))
-                        {
-                            continue;
-                        }
-                        stringBuilder.AppendFormat("Could not find a CodeSnippet for the key '{0}'. LineNumber:{1}", key, lineNumber);
-                        stringBuilder.AppendLine();
-                    }
-                }
+                key = null;
+                return false;
             }
-            if (stringBuilder.Length > 0)
+            var substring = line.Substring(indexOfImport + 12);
+            var indexOfFinish = substring.IndexOf(" -->");
+            if (indexOfFinish == -1)
             {
-                throw new Exception(stringBuilder.ToString());
+                key = null;
+                return false;
             }
+            key = substring.Substring(0, indexOfFinish);
+            return true;
         }
 
-        static string ProcessMatch(string key, string value, string baseLineText)
-        {
-            var lookup = string.Format("<!-- import {0} -->", key);
-
-            var codeSnippet = string.Format(
-@"```
-{0}
-```", value);
-
-            var builder = new StringBuilder();
-            using (var reader = new StringReader(baseLineText))
-            {
-                string line;
-                var eatingCode = false;
-                var eatingCodePending = false;
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if (eatingCodePending)
-                    {
-                        eatingCodePending = false;
-                        if (line.IsMdCodeDelimiter())
-                        {
-                            eatingCode = true;
-                            continue;
-                        }
-                    }
-                    if (eatingCode)
-                    {
-                        if (line.IsMdCodeDelimiter())
-                        {
-                            eatingCode = false;
-                        }
-                        continue;
-                    }
-                    builder.AppendLine(line);
-                    if (line.Contains(lookup))
-                    {
-                        builder.AppendLine(codeSnippet);
-                        eatingCodePending = true;
-                    }
-                }
-            }
-
-            return builder.ToString().TrimTrailingNewLine();
-        }
 
     }
 }

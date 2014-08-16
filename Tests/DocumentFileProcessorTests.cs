@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 using CaptureSnippets;
 using NUnit.Framework;
+using ObjectApproval;
 
 [TestFixture]
 public class DocumentFileProcessorTests
@@ -21,8 +21,8 @@ public class DocumentFileProcessorTests
                         Key = "FoundKey2"
                     },
             };
-        var exception = Assert.Throws<Exception>(() => MarkdownProcessor.CheckMissingKeys(snippets, "<!-- import MissingKey -->"));
-        ApprovalTests.Approvals.Verify(exception.Message);
+            var result = MarkdownProcessor.ApplyToText(snippets, "<!-- import MissingKey -->");
+            ObjectApprover.VerifyWithJson(result);
     }
 
     [Test]
@@ -39,43 +39,10 @@ public class DocumentFileProcessorTests
                         Key = "FoundKey2"
                     },
             };
-        var exception = Assert.Throws<Exception>(() => MarkdownProcessor.CheckMissingKeys(snippets, "<!-- import MissingKey1 -->\r\n\r\n<!-- import MissingKey2 -->"));
-        ApprovalTests.Approvals.Verify(exception.Message);
+        var result = MarkdownProcessor.ApplyToText(snippets, "<!-- import MissingKey1 -->\r\n\r\n<!-- import MissingKey2 -->");
+        ObjectApprover.VerifyWithJson(result);
     }
 
-    [Test]
-    public void FoundKey()
-    {
-        var snippets = new List<Snippet>
-            {
-                new Snippet
-                    {
-                        Key = "FoundKey1"
-                    },
-                new Snippet
-                    {
-                        Key = "FoundKey2"
-                    },
-            };
-         MarkdownProcessor.CheckMissingKeys(snippets, "<!-- import FoundKey2 -->");
-    }
-
-    [Test]
-    public void FoundMultipleKeys()
-    {
-        var snippets = new List<Snippet>
-            {
-                new Snippet
-                    {
-                        Key = "FoundKey1"
-                    },
-                new Snippet
-                    {
-                        Key = "FoundKey2"
-                    },
-            };
-        MarkdownProcessor.CheckMissingKeys(snippets, "<!-- import FoundKey2 -->\r\b\n<!-- import FoundKey1 -->");
-    }
 
     [Test]
     public void LotsOfText()
@@ -112,7 +79,7 @@ public class DocumentFileProcessorTests
                     },
             };
         var startNew = Stopwatch.StartNew();
-        MarkdownProcessor.CheckMissingKeys(snippets, @"<!-- import FoundKey2 -->\r\b\n<!-- import FoundKey1 -->
+        var result = MarkdownProcessor.ApplyToText(snippets, @"<!-- import FoundKey2 -->\r\b\n<!-- import FoundKey1 -->
 dflkgmxdklfmgkdflxmg
 dflkgmxdklfmgkdflxmg
 dflkgmxdklfmgkdflxmgfkgjnfdjkgn
@@ -237,7 +204,7 @@ kdjrngkjfncgdflkgmxdklfmgkdflxmg<!-- import FoundKey1 -->
 kdjrngkjfncgdflkgmxdklfmgkdflxmg
 dflkgmxdklfmgkdflxmg
 lkmdflkgmxdklfmgkdflxmg
-");
-        Trace.WriteLine(startNew.ElapsedTicks);
+"); 
+        ObjectApprover.VerifyWithJson(result);
     }
 }
