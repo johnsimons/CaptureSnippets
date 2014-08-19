@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using CaptureSnippets;
 using NUnit.Framework;
 using ObjectApproval;
@@ -59,27 +58,15 @@ public class DocumentFileProcessorTests
                     },
                 new Snippet
                     {
+                        Key = "FoundKey3"
+                    },
+                new Snippet
+                    {
                         Key = "FoundKey4"
                     },
-                new Snippet
-                    {
-                        Key = "FoundKey7"
-                    },
-                new Snippet
-                    {
-                        Key = "FoundKey2"
-                    },
-                new Snippet
-                    {
-                        Key = "FoundKey5"
-                    },
-                new Snippet
-                    {
-                        Key = "FoundKey1"
-                    },
             };
-        var startNew = Stopwatch.StartNew();
-        var result = MarkdownProcessor.ApplyToText(snippets, @"<!-- import FoundKey2 -->\r\b\n<!-- import FoundKey1 -->
+        var result = MarkdownProcessor.ApplyToText(snippets, @"
+<!-- import FoundKey2 -->\r\b\n<!-- import FoundKey1 -->
 dflkgmxdklfmgkdflxmg
 dflkgmxdklfmgkdflxmg
 dflkgmxdklfmgkdflxmgfkgjnfdjkgn

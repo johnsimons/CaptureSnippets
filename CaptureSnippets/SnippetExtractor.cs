@@ -56,10 +56,10 @@ namespace CaptureSnippets
             Regex regex;
             if (RegexParser.TryGetRegex(expression, out regex))
             {
-                var allFiles = Directory.GetFiles(codeFolder, "*.*", SearchOption.AllDirectories);
-                return allFiles.Where(f => regex.IsMatch(f));
+                return Directory.EnumerateFiles(codeFolder, "*.*", SearchOption.AllDirectories)
+                    .Where(f => regex.IsMatch(f));
             }
-            return Directory.GetFiles(codeFolder, expression, SearchOption.AllDirectories);
+            return Directory.EnumerateFiles(codeFolder, expression, SearchOption.AllDirectories);
         }
 
 
@@ -70,15 +70,10 @@ namespace CaptureSnippets
 
             foreach (var file in codeFiles)
             {
-                //Reading 
-                var contents = File.ReadAllText(file);
-                if (!contents.Contains("startcode ") && !contents.Contains("#region "))
+                using (var stringReader = File.OpenText(file))
                 {
-                    continue;
+                    snippets.AddRange(GetSnippetsFromText(file, stringReader));
                 }
-
-                var innerList = GetSnippetsFromText(contents, file);
-                snippets.AddRange(innerList);
             }
 
             return snippets;
@@ -86,11 +81,16 @@ namespace CaptureSnippets
 
         public static IEnumerable<Snippet> GetSnippetsFromText(string contents, string file)
         {
-            var lines = contents.Split(new[]
+            using (var stringReader = new StringReader(contents))
             {
-                "\r\n", "\n"
-            }, StringSplitOptions.None);
-            var innerList = GetSnippetsFromFile(lines).ToList();
+                return GetSnippetsFromText(file, stringReader);
+            }
+        }
+
+        static IEnumerable<Snippet> GetSnippetsFromText(string file, TextReader stringReader)
+        {
+            var innerList = GetSnippetsFromFile(stringReader).ToList();
+
             foreach (var snippet in innerList)
             {
                 snippet.File = file;
@@ -109,29 +109,34 @@ namespace CaptureSnippets
             return String.Empty;
         }
 
-        static IEnumerable<Snippet> GetSnippetsFromFile(string[] lines)
+        static IEnumerable<Snippet> GetSnippetsFromFile(TextReader stringReader)
         {
             string currentKey = null;
             var startLine = 0;
             var isInSnippet = false;
             List<string> snippetLines = null;
             Func<string, bool> endFunc = null;
-            for (var i = 0; i < lines.Length; i++)
+            var lineNumber = 0;
+            while (true)
             {
-                var line = lines[i];
+                var line = stringReader.ReadLine();
+                if (line == null)
+                {
+                    break;
+                }
                 if (isInSnippet)
                 {
                     if (endFunc(line))
                     {
                         isInSnippet = false;
                         snippetLines = snippetLines
-                           .ExcludeEmptyPaddingLines()
-                           .TrimIndentation()
-                           .ToList();
+                            .ExcludeEmptyPaddingLines()
+                            .TrimIndentation()
+                            .ToList();
                         yield return new Snippet
                         {
                             StartRow = startLine+1,
-                            EndRow = i,
+                            EndRow = lineNumber+2,
                             Key = currentKey,
                             Value = string.Join(LineEnding, snippetLines)
                         };
@@ -147,7 +152,7 @@ namespace CaptureSnippets
                     {
                         endFunc = IsEndCode;
                         isInSnippet = true;
-                        startLine = i;
+                        startLine = lineNumber;
                         snippetLines = new List<string>();
                         continue;
                     }
@@ -155,12 +160,13 @@ namespace CaptureSnippets
                     {
                         endFunc = IsEndRegion;
                         isInSnippet = true;
-                        startLine = i;
+                        startLine = lineNumber;
                         snippetLines = new List<string>();
                     }
                 }
+                lineNumber++;
             }
-            
+
         }
 
         static bool IsStartCode(string line, out string key)

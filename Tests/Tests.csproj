@@ -74,6 +74,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="ApprovalTestConfig.cs" />
+    <Compile Include="IntegrationTests.cs" />
     <Compile Include="DocumentFileProcessorTests.cs" />
     <Compile Include="Extensions.cs" />
     <None Include="scenarios\09-IgnoreCase\code.cs">

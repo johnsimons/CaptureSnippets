@@ -1,2 +1,14 @@
-﻿Could not find a CodeSnippet for the key 'MissingKey1'. LineNumber:1
-Could not find a CodeSnippet for the key 'MissingKey2'. LineNumber:3
+﻿{
+    "Text": "<!-- import MissingKey1 -->\r\n** Could not find key 'MissingKey1' **\r\n\r\n<!-- import MissingKey2 -->\r\n** Could not find key 'MissingKey2' **",
+    "UsedSnippets": [],
+    "MissingSnippet": [
+        {
+            "Key": "MissingKey1",
+            "Line": 1
+        },
+        {
+            "Key": "MissingKey2",
+            "Line": 3
+        }
+    ]
+}
