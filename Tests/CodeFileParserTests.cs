@@ -12,7 +12,7 @@ public class CodeFileParserTests
         var directory = @"data\get-code-snippets\".ToCurrentDirectory();
 
         var parser = new SnippetExtractor(directory);
-        var actual = parser.Parse(".*code[.]cs");
+        var actual = parser.Parse(".*code[.]cs").ToList();
 
         Assert.IsTrue(actual.Count > 1);
         Assert.IsTrue(actual.All(c => !string.IsNullOrWhiteSpace(c.Value)));
@@ -24,7 +24,7 @@ public class CodeFileParserTests
         var directory = @"data\use-regexes\".ToCurrentDirectory();
 
         var parser = new SnippetExtractor(directory);
-        var actual = parser.Parse("[.]cs");
+        var actual = parser.Parse("[.]cs").ToList();
 
         Assert.AreEqual(2, actual.Count);
     }
@@ -35,7 +35,7 @@ public class CodeFileParserTests
         var directory = @"data\use-regexes\".ToCurrentDirectory();
 
         var parser = new SnippetExtractor(directory);
-        var actual = parser.Parse(@".*want.*[.]cs");
+        var actual = parser.Parse(@".*want.*[.]cs").ToList();
 
         Assert.AreEqual(1,actual.Count);
     }
@@ -49,7 +49,7 @@ public class CodeFileParserTests
         var outputFile = Path.Combine(directory, @"output.md");
 
         var parser = new SnippetExtractor(directory);
-        var snippets = parser.Parse(".*code[.]cs");
+        var snippets = parser.Parse(".*code[.]cs").ToList();
 
         var result = MarkdownProcessor.ApplyToText(snippets, File.ReadAllText(inputFile));
 

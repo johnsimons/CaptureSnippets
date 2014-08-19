@@ -13,7 +13,7 @@ public class StringExtensionTests
         Assert.AreEqual("Foo2", "Foo2 ".ReadUntilNotCharacter());
         Assert.AreEqual("Foo2", "Foo2-".ReadUntilNotCharacter());
         Assert.AreEqual("Foo2", "Foo2 f".ReadUntilNotCharacter());
-        Assert.IsNull(" Foo2 f".ReadUntilNotCharacter());
+        Assert.IsEmpty(" Foo2 f".ReadUntilNotCharacter());
     }
 
     [Test]
@@ -38,6 +38,18 @@ public class StringExtensionTests
             "   ",
         };
         ObjectApprover.VerifyWithJson(input.ExcludeEmptyPaddingLines());
+    }
+
+    [Test]
+    public void TrimIndentation_with_mis_match()
+    {
+        var input= new List<string>
+        {
+            "      Line2",
+            "   ",
+            "     Line4",
+        };
+        ObjectApprover.VerifyWithJson(input.TrimIndentation());
     }
 
     [Test]

@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using CaptureSnippets;
 using NUnit.Framework;
 
@@ -20,7 +21,7 @@ public class ImportTestSuite
     void Run(string folder, string input, string expectedOutput)
     {
         var parser = new SnippetExtractor(folder);
-        var snippets = parser.Parse(new[] {".*code[.]cs"});
+        var snippets = parser.Parse(new[] { ".*code[.]cs" }).ToList();
 
         var result = MarkdownProcessor.ApplyToText(snippets, File.ReadAllText(input));
 

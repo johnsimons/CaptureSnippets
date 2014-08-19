@@ -22,21 +22,15 @@ namespace CaptureSnippets
 
         public static string ReadUntilNotCharacter(this string line)
         {
-            var stringBuilder = new StringBuilder();
-            foreach (var ch in line)
+            for (var index = 0; index < line.Length; index++)
             {
+                var ch = line[index];
                 if (!Char.IsLetterOrDigit(ch))
                 {
-                    break;
+                    return line.Substring(0, index);
                 }
-                stringBuilder.Append(ch);
             }
-            var value = stringBuilder.ToString();
-            if (value == "")
-            {
-                return null;
-            }
-            return value;
+            return line;
         }
 
         public static IEnumerable<string> ExcludeEmptyPaddingLines(this IEnumerable<string> snippetLines)

@@ -19,37 +19,23 @@ namespace CaptureSnippets
         }
 
         [Time]
-        public List<Snippet> Parse(params string[] filterOnExpressions)
+        public IEnumerable<Snippet> Parse(params string[] filterOnExpressions)
         {
-            var filesMatchingExtensions = new List<string>();
-
             foreach (var expression in filterOnExpressions)
             {
-                var collection = FindFromExpression(expression);
-                filesMatchingExtensions.AddRange(collection);
+                foreach (var file in FindFromExpression(expression))
+                {
+                    using (var stringReader = File.OpenText(file))
+                    {
+                        foreach (var snippet in GetSnippetsFromTextReader(stringReader, file))
+                        {
+                            yield return snippet;
+                        }
+                    }
+                }
             }
-            var snippets = GetSnippets(filesMatchingExtensions.Where(x => !x.Contains(@"\obj\"))
-                .Distinct());
-
-            ThrowForIncompleteSnippets(snippets);
-            return snippets;
         }
 
-        static void ThrowForIncompleteSnippets(List<Snippet> snippets)
-        {
-            var incompleteSnippets = snippets.Where(s => string.IsNullOrWhiteSpace(s.Value)).ToList();
-            if (!incompleteSnippets.Any())
-            {
-                return;
-            }
-            var stringBuilder = new StringBuilder();
-            foreach (var incompleteSnippet in incompleteSnippets)
-            {
-                stringBuilder.AppendFormat("Code snippet reference '{0}' was not closed (specify 'endcode {0}'). File:{1} LineNumber: {2}", incompleteSnippet.Key, incompleteSnippet.File, incompleteSnippet.StartRow);
-                stringBuilder.AppendLine();
-            }
-            throw new Exception(stringBuilder.ToString());
-        }
 
         IEnumerable<string> FindFromExpression(string expression)
         {
@@ -57,37 +43,22 @@ namespace CaptureSnippets
             if (RegexParser.TryGetRegex(expression, out regex))
             {
                 return Directory.EnumerateFiles(codeFolder, "*.*", SearchOption.AllDirectories)
-                    .Where(f => regex.IsMatch(f));
+                    .Where(f => regex.IsMatch(f) && !f.Contains(@"\obj\"));
             }
-            return Directory.EnumerateFiles(codeFolder, expression, SearchOption.AllDirectories);
+            return Directory.EnumerateFiles(codeFolder, expression, SearchOption.AllDirectories)
+                .Where(f => !f.Contains(@"\obj\"));;
         }
 
-
-        [Time]
-        public static List<Snippet> GetSnippets(IEnumerable<string> codeFiles)
-        {
-            var snippets = new List<Snippet>();
-
-            foreach (var file in codeFiles)
-            {
-                using (var stringReader = File.OpenText(file))
-                {
-                    snippets.AddRange(GetSnippetsFromText(file, stringReader));
-                }
-            }
-
-            return snippets;
-        }
 
         public static IEnumerable<Snippet> GetSnippetsFromText(string contents, string file)
         {
-            using (var stringReader = new StringReader(contents))
+            using (var reader = new StringReader(contents))
             {
-                return GetSnippetsFromText(file, stringReader);
+                return GetSnippetsFromTextReader(reader, file);
             }
         }
 
-        static IEnumerable<Snippet> GetSnippetsFromText(string file, TextReader stringReader)
+        static IEnumerable<Snippet> GetSnippetsFromTextReader(TextReader stringReader, string file)
         {
             var innerList = GetSnippetsFromFile(stringReader).ToList();
 
@@ -129,16 +100,15 @@ namespace CaptureSnippets
                     if (endFunc(line))
                     {
                         isInSnippet = false;
-                        snippetLines = snippetLines
+                        var snippetValue = snippetLines
                             .ExcludeEmptyPaddingLines()
-                            .TrimIndentation()
-                            .ToList();
+                            .TrimIndentation();
                         yield return new Snippet
                         {
                             StartRow = startLine+1,
                             EndRow = lineNumber+2,
                             Key = currentKey,
-                            Value = string.Join(LineEnding, snippetLines)
+                            Value = string.Join(LineEnding, snippetValue)
                         };
                         snippetLines = null;
                         currentKey = null;
@@ -166,27 +136,8 @@ namespace CaptureSnippets
                 }
                 lineNumber++;
             }
-
         }
 
-        static bool IsStartCode(string line, out string key)
-        {
-            var startCodeIndex = line.IndexOf("startcode ");
-            if (startCodeIndex != -1)
-            {
-                var startIndex = startCodeIndex + 10;
-                key = line.RemoveStart(startIndex)
-                    .ReadUntilNotCharacter();
-                if (string.IsNullOrWhiteSpace(key))
-                {
-                    var message = string.Format("Could not extract key from '{0}'.", line);
-                    throw new Exception(message);
-                }
-                return true;
-            }
-            key = null;
-            return false;
-        }
         
         static bool IsEndRegion(string line)
         {
@@ -198,18 +149,18 @@ namespace CaptureSnippets
             return line.Contains("endcode");
         }
 
-        static bool IsStartRegion(string line, out string key)
+        static bool IsStartCode(string line, out string key)
         {
-            var startCodeIndex = line.IndexOf("#region ");
+            var startCodeIndex = line.IndexOf("startcode ");
             if (startCodeIndex != -1)
             {
-                var startIndex = startCodeIndex + 8;
-                key = line.RemoveStart(startIndex);
-                key = key.ReadUntilNotCharacter();
+                var startIndex = startCodeIndex + 10;
+                key = line.Substring(startIndex)
+                    .ReadUntilNotCharacter();
                 if (string.IsNullOrWhiteSpace(key))
                 {
-                    var message = string.Format("Could not extract key from '{0}'.", line);
-                    throw new Exception(message);
+                    key = null;
+                    return false;
                 }
                 return true;
             }
@@ -217,6 +168,41 @@ namespace CaptureSnippets
             return false;
         }
 
+        static bool IsStartRegion(string line, out string key)
+        {
+            var startCodeIndex = line.IndexOf("#region ");
+            if (startCodeIndex != -1)
+            {
+                var startIndex = startCodeIndex + 8;
+                key = line.Substring(startIndex)
+                    .Trim();
+                if (string.IsNullOrWhiteSpace(key))
+                {
+                    key = null;
+                    return false;
+                }
+                return true;
+            }
+            key = null;
+            return false;
+        }
+
+
+        static void ThrowForIncompleteSnippets(List<Snippet> snippets)
+        {
+            var incompleteSnippets = snippets.Where(s => string.IsNullOrWhiteSpace(s.Value)).ToList();
+            if (!incompleteSnippets.Any())
+            {
+                return;
+            }
+            var stringBuilder = new StringBuilder();
+            foreach (var incompleteSnippet in incompleteSnippets)
+            {
+                stringBuilder.AppendFormat("Code snippet reference '{0}' was not closed (specify 'endcode {0}'). File:{1} LineNumber: {2}", incompleteSnippet.Key, incompleteSnippet.File, incompleteSnippet.StartRow);
+                stringBuilder.AppendLine();
+            }
+            throw new Exception(stringBuilder.ToString());
+        }
 
     }
 }
