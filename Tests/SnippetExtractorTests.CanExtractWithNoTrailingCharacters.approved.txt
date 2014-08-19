@@ -5,6 +5,7 @@
         "Value": "the code",
         "Key": "CodeKey",
         "Language": "",
-        "File": null
+        "File": null,
+        "IsUnclosed": false
     }
 ]

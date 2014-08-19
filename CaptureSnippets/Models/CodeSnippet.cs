@@ -8,5 +8,6 @@ namespace CaptureSnippets
         public string Key;
         public string Language;
         public string File;
+        public bool IsUnclosed;
     }
 }

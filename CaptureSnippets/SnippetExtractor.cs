@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using MethodTimer;
 
@@ -93,6 +92,16 @@ namespace CaptureSnippets
                 var line = stringReader.ReadLine();
                 if (line == null)
                 {
+                    if (isInSnippet)
+                    {
+                        yield return new Snippet
+                        {
+                            StartRow = startLine + 1,
+                            Key = currentKey,
+                            Value = "SNIPPET WAS NOT CLOSED",
+                            IsUnclosed = true
+                        };
+                    }
                     break;
                 }
                 if (isInSnippet)
@@ -187,22 +196,6 @@ namespace CaptureSnippets
             return false;
         }
 
-
-        static void ThrowForIncompleteSnippets(List<Snippet> snippets)
-        {
-            var incompleteSnippets = snippets.Where(s => string.IsNullOrWhiteSpace(s.Value)).ToList();
-            if (!incompleteSnippets.Any())
-            {
-                return;
-            }
-            var stringBuilder = new StringBuilder();
-            foreach (var incompleteSnippet in incompleteSnippets)
-            {
-                stringBuilder.AppendFormat("Code snippet reference '{0}' was not closed (specify 'endcode {0}'). File:{1} LineNumber: {2}", incompleteSnippet.Key, incompleteSnippet.File, incompleteSnippet.StartRow);
-                stringBuilder.AppendLine();
-            }
-            throw new Exception(stringBuilder.ToString());
-        }
 
     }
 }

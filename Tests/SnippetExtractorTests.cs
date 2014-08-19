@@ -18,6 +18,25 @@ public class SnippetExtractorTests
     }
 
     [Test]
+    public void UnClosedSnippet()
+    {
+        var input = @"
+  <!-- startcode CodeKey -->
+  <configSections/>";
+        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
+        ObjectApprover.VerifyWithJson(snippets);
+    }
+    [Test]
+    public void UnClosedRegion()
+    {
+        var input = @"
+  #region CodeKey
+  <configSections/>";
+        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
+        ObjectApprover.VerifyWithJson(snippets);
+    }
+
+    [Test]
     public void CanExtractFromRegion()
     {
         var input = @"

@@ -1,0 +1,11 @@
+﻿[
+    {
+        "StartRow": 2,
+        "EndRow": 0,
+        "Value": "SNIPPET WAS NOT CLOSED",
+        "Key": "CodeKey",
+        "Language": "",
+        "File": null,
+        "IsUnclosed": true
+    }
+]
