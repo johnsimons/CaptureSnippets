@@ -7,7 +7,8 @@
             "Value": null,
             "Key": "FoundKey2",
             "Language": null,
-            "File": null
+            "File": null,
+            "IsUnclosed": false
         },
         {
             "StartRow": 0,
@@ -15,7 +16,8 @@
             "Value": null,
             "Key": "FoundKey1",
             "Language": null,
-            "File": null
+            "File": null,
+            "IsUnclosed": false
         },
         {
             "StartRow": 0,
@@ -23,7 +25,8 @@
             "Value": null,
             "Key": "FoundKey1",
             "Language": null,
-            "File": null
+            "File": null,
+            "IsUnclosed": false
         },
         {
             "StartRow": 0,
@@ -31,7 +34,8 @@
             "Value": null,
             "Key": "FoundKey1",
             "Language": null,
-            "File": null
+            "File": null,
+            "IsUnclosed": false
         },
         {
             "StartRow": 0,
@@ -39,7 +43,8 @@
             "Value": null,
             "Key": "FoundKey1",
             "Language": null,
-            "File": null
+            "File": null,
+            "IsUnclosed": false
         },
         {
             "StartRow": 0,
@@ -47,7 +52,8 @@
             "Value": null,
             "Key": "FoundKey1",
             "Language": null,
-            "File": null
+            "File": null,
+            "IsUnclosed": false
         },
         {
             "StartRow": 0,
@@ -55,7 +61,8 @@
             "Value": null,
             "Key": "FoundKey1",
             "Language": null,
-            "File": null
+            "File": null,
+            "IsUnclosed": false
         },
         {
             "StartRow": 0,
@@ -63,7 +70,8 @@
             "Value": null,
             "Key": "FoundKey1",
             "Language": null,
-            "File": null
+            "File": null,
+            "IsUnclosed": false
         },
         {
             "StartRow": 0,
@@ -71,7 +79,8 @@
             "Value": null,
             "Key": "FoundKey1",
             "Language": null,
-            "File": null
+            "File": null,
+            "IsUnclosed": false
         }
     ],
     "MissingSnippet": []
