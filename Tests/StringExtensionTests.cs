@@ -7,13 +7,14 @@ using ObjectApproval;
 public class StringExtensionTests
 {
     [Test]
-    public void ReadUntilNotCharacter()
+    public void TrimNonCharacters()
     {
-        Assert.AreEqual("Foo2", "Foo2".ReadUntilNotCharacter());
-        Assert.AreEqual("Foo2", "Foo2 ".ReadUntilNotCharacter());
-        Assert.AreEqual("Foo2", "Foo2-".ReadUntilNotCharacter());
-        Assert.AreEqual("Foo2", "Foo2 f".ReadUntilNotCharacter());
-        Assert.IsEmpty(" Foo2 f".ReadUntilNotCharacter());
+        Assert.AreEqual("Foo2", "Foo2".TrimNonCharacters());
+        Assert.AreEqual("Foo2", "Foo2 ".TrimNonCharacters());
+        Assert.AreEqual("Foo2", "Foo2-".TrimNonCharacters());
+        Assert.AreEqual("Foo2", "-Foo2-".TrimNonCharacters());
+        Assert.AreEqual("Fo_o2", "-Fo_o2-".TrimNonCharacters());
+        Assert.AreEqual("Fo-o2", "_Fo-o2_".TrimNonCharacters());
     }
 
     [Test]

@@ -19,17 +19,20 @@ namespace CaptureSnippets
             }
         }
 
-        public static string ReadUntilNotCharacter(this string line)
+        public static string TrimNonCharacters(this string line)
         {
-            for (var index = 0; index < line.Length; index++)
-            {
-                var ch = line[index];
-                if (!Char.IsLetterOrDigit(ch))
-                {
-                    return line.Substring(0, index);
-                }
-            }
-            return line;
+            var array = line.SkipWhile(c => !Char.IsLetterOrDigit(c))
+                .Reverse()
+                .SkipWhile(c => !Char.IsLetterOrDigit(c))
+                .Reverse().ToArray();
+            return new string(array);
+        }
+
+        public static string Reverse(this string s)
+        {
+            var charArray = s.ToCharArray();
+            Array.Reverse(charArray);
+            return new string(charArray);
         }
 
         public static IEnumerable<string> ExcludeEmptyPaddingLines(this IEnumerable<string> snippetLines)

@@ -77,11 +77,21 @@
     <Compile Include="IntegrationTests.cs" />
     <Compile Include="DocumentFileProcessorTests.cs" />
     <Compile Include="Extensions.cs" />
+    <None Include="scenarios\10-WeirdCharacters\input.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="scenarios\10-WeirdCharacters\output.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="scenarios\09-IgnoreCase\code.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="MarkdownProcessorTests.cs" />
+    <None Include="scenarios\10-WeirdCharacters\code.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <Compile Include="SnippetExtractorTests.cs" />
+    <Compile Include="SnippetExtractor_IsStartCodeTests.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="StringExtensionTests.cs" />
     <None Include="data\apply-snippets\input.md">

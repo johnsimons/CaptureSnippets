@@ -158,20 +158,25 @@ namespace CaptureSnippets
             return line.Contains("endcode");
         }
 
-        static bool IsStartCode(string line, out string key)
+        public static bool IsStartCode(string line, out string key)
         {
+            line = line.Replace("  ", " ");
             var startCodeIndex = line.IndexOf("startcode ");
             if (startCodeIndex != -1)
             {
                 var startIndex = startCodeIndex + 10;
-                key = line.Substring(startIndex)
-                    .ReadUntilNotCharacter();
-                if (string.IsNullOrWhiteSpace(key))
+                var splitBySpace = line.Substring(startIndex)
+                    .Split(new[]{' '},StringSplitOptions.RemoveEmptyEntries);
+                if (splitBySpace.Any())
                 {
-                    key = null;
-                    return false;
+                    key = splitBySpace
+                        .First()
+                        .TrimNonCharacters();
+                    if (!string.IsNullOrWhiteSpace(key))
+                    {
+                        return true;
+                    }
                 }
-                return true;
             }
             key = null;
             return false;
