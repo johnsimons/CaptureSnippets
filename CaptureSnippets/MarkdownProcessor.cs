@@ -90,6 +90,7 @@ namespace CaptureSnippets
 
         public static bool TryExtractKeyFromLine(string line, out string key)
         {
+            line = line.Replace("  ", " ");
             var indexOfImport = line.IndexOf("<!-- import ");
             if (indexOfImport == -1)
             {
