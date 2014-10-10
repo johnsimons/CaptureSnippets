@@ -92,19 +92,26 @@ namespace CaptureSnippets
         {
             line = line.Replace("  ", " ");
             var indexOfImport = line.IndexOf("<!-- import ");
+            var charsToTrim = 12;
             if (indexOfImport == -1)
             {
-                key = null;
-                return false;
+                charsToTrim = 11;
+                indexOfImport = line.IndexOf("<!--import ");
+                if (indexOfImport == -1)
+                {
+                    key = null;
+                    return false;
+                }
             }
-            var substring = line.Substring(indexOfImport + 12);
-            var indexOfFinish = substring.IndexOf(" -->");
+            var substring = line.Substring(indexOfImport + charsToTrim);
+            var indexOfFinish = substring.IndexOf("-->");
             if (indexOfFinish == -1)
             {
                 key = null;
                 return false;
             }
-            key = substring.Substring(0, indexOfFinish);
+            key = substring.Substring(0, indexOfFinish)
+                .TrimNonCharacters();
             return true;
         }
 
