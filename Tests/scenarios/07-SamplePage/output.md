@@ -3,7 +3,7 @@
 This is some words about the code below. Look below!
 
 <!-- import LinqToJsonBasic -->
-```
+```cs
 JObject o = JObject.Parse(@"{
 'CPU': 'Intel',
 'Drives': [

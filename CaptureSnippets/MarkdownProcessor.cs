@@ -78,7 +78,14 @@ namespace CaptureSnippets
                 }
                 var value = codeSnippet.Value;
 
-                stringBuilder.AppendLine("```");
+                if (codeSnippet.Language == null)
+                {
+                    stringBuilder.AppendLine("```");
+                }
+                else
+                {
+                    stringBuilder.AppendLine("```" + codeSnippet.Language);
+                }
                 stringBuilder.AppendLine(value);
                 stringBuilder.AppendLine("```");
                 eatingCodePending = true;

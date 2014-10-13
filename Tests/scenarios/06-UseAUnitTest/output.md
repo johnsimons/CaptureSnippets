@@ -1,5 +1,5 @@
 ﻿<!-- import LinqToJsonBasic -->
-```
+```cs
 JObject o = JObject.Parse(@"{
 'CPU': 'Intel',
 'Drives': [
