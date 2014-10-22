@@ -47,6 +47,8 @@ public class SnippetExtractorTests
         ObjectApprover.VerifyWithJson(snippets);
     }
 
+
+
     [Test]
     public void CanExtractWithNoTrailingCharacters()
     {

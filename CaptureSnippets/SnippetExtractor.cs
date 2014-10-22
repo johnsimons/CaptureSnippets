@@ -104,9 +104,11 @@ namespace CaptureSnippets
                     }
                     break;
                 }
+
+                var trimmedLine = line.Trim().Replace("  ", " ").ToLowerInvariant();
                 if (isInSnippet)
                 {
-                    if (endFunc(line))
+                    if (endFunc(trimmedLine))
                     {
                         isInSnippet = false;
                         var snippetValue = snippetLines
@@ -127,7 +129,7 @@ namespace CaptureSnippets
                 }
                 else
                 {
-                    if (IsStartCode(line, out currentKey))
+                    if (IsStartCode(trimmedLine, out currentKey))
                     {
                         endFunc = IsEndCode;
                         isInSnippet = true;
@@ -135,7 +137,7 @@ namespace CaptureSnippets
                         snippetLines = new List<string>();
                         continue;
                     }
-                    if (IsStartRegion(line, out currentKey))
+                    if (IsStartRegion(trimmedLine, out currentKey))
                     {
                         endFunc = IsEndRegion;
                         isInSnippet = true;
@@ -147,21 +149,20 @@ namespace CaptureSnippets
             }
         }
 
-        
-        static bool IsEndRegion(string line)
+
+        private static bool IsEndRegion(string line)
         {
-            return line.Contains("#endregion");
+            return line.IndexOf("#endregion", StringComparison.Ordinal) >= 0;
         }
 
-        static bool IsEndCode(string line)
+        private static bool IsEndCode(string line)
         {
-            return line.Contains("endcode");
+            return line.IndexOf("endcode", StringComparison.Ordinal) >= 0;
         }
 
         public static bool IsStartCode(string line, out string key)
         {
-            line = line.Replace("  ", " ");
-            var startCodeIndex = line.IndexOf("startcode ");
+            var startCodeIndex = line.IndexOf("startcode ", StringComparison.Ordinal);
             if (startCodeIndex != -1)
             {
                 var startIndex = startCodeIndex + 10;
@@ -184,7 +185,7 @@ namespace CaptureSnippets
 
         static bool IsStartRegion(string line, out string key)
         {
-            var startCodeIndex = line.IndexOf("#region ");
+            var startCodeIndex = line.IndexOf("#region ", StringComparison.Ordinal);
             if (startCodeIndex != -1)
             {
                 var startIndex = startCodeIndex + 8;

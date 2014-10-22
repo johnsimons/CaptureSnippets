@@ -77,6 +77,12 @@
     <Compile Include="IntegrationTests.cs" />
     <Compile Include="DocumentFileProcessorTests.cs" />
     <Compile Include="Extensions.cs" />
+    <None Include="scenarios\11-Duplicates\input.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="scenarios\11-Duplicates\output.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="scenarios\10-WeirdCharacters\input.md">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -88,6 +94,9 @@
     </None>
     <Compile Include="MarkdownProcessorTests.cs" />
     <None Include="scenarios\10-WeirdCharacters\code.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="scenarios\11-Duplicates\code.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Compile Include="SnippetExtractorTests.cs" />

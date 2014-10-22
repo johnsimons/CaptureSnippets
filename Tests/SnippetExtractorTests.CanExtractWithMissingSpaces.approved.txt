@@ -3,7 +3,7 @@
         "StartRow": 2,
         "EndRow": 4,
         "Value": "<configSections/>",
-        "Key": "CodeKey",
+        "Key": "codekey",
         "Language": "",
         "File": null,
         "IsUnclosed": false
