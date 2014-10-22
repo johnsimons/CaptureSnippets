@@ -2,54 +2,30 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using MethodTimer;
 
 namespace CaptureSnippets
 {
-    public class SnippetExtractor
+    public static class SnippetExtractor
     {
         const string LineEnding = "\r\n";
-        string codeFolder;
-
-        public SnippetExtractor(string codeFolder)
-        {
-            this.codeFolder = codeFolder;
-        }
 
         [Time]
-        public IEnumerable<Snippet> Parse(params string[] filterOnExpressions)
+        public static IEnumerable<Snippet> FromFiles(IEnumerable<string> files)
         {
-            foreach (var expression in filterOnExpressions)
+            foreach (var file in files)
             {
-                foreach (var file in FindFromExpression(expression))
+                using (var stringReader = File.OpenText(file))
                 {
-                    using (var stringReader = File.OpenText(file))
+                    foreach (var snippet in GetSnippetsFromTextReader(stringReader, file))
                     {
-                        foreach (var snippet in GetSnippetsFromTextReader(stringReader, file))
-                        {
-                            yield return snippet;
-                        }
+                        yield return snippet;
                     }
                 }
             }
         }
 
-
-        IEnumerable<string> FindFromExpression(string expression)
-        {
-            Regex regex;
-            if (RegexParser.TryGetRegex(expression, out regex))
-            {
-                return Directory.EnumerateFiles(codeFolder, "*.*", SearchOption.AllDirectories)
-                    .Where(f => regex.IsMatch(f) && !f.Contains(@"\obj\"));
-            }
-            return Directory.EnumerateFiles(codeFolder, expression, SearchOption.AllDirectories)
-                .Where(f => !f.Contains(@"\obj\"));;
-        }
-
-
-        public static IEnumerable<Snippet> GetSnippetsFromText(string contents, string file)
+        public static IEnumerable<Snippet> FromText(string contents, string file = null)
         {
             using (var reader = new StringReader(contents))
             {

@@ -20,8 +20,7 @@ public class ImportTestSuite
 
     void Run(string folder, string input, string expectedOutput)
     {
-        var parser = new SnippetExtractor(folder);
-        var snippets = parser.Parse(new[] { ".*code[.]cs" }).ToList();
+        var snippets = SnippetExtractor.FromFiles(Directory.EnumerateFiles(folder, "code.cs")).ToList();
 
         var result = MarkdownProcessor.ApplyToText(snippets, File.ReadAllText(input));
 

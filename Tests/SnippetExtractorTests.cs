@@ -5,7 +5,6 @@ using ObjectApproval;
 [TestFixture]
 public class SnippetExtractorTests
 {
-
     [Test]
     public void CanExtractFromXml()
     {
@@ -13,7 +12,7 @@ public class SnippetExtractorTests
   <!-- startcode CodeKey -->
   <configSections/>
   <!-- endcode -->";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
+        var snippets = SnippetExtractor.FromText(input);
         ObjectApprover.VerifyWithJson(snippets);
     }
 
@@ -23,7 +22,7 @@ public class SnippetExtractorTests
         var input = @"
   <!-- startcode CodeKey -->
   <configSections/>";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
+        var snippets = SnippetExtractor.FromText(input);
         ObjectApprover.VerifyWithJson(snippets);
     }
     [Test]
@@ -32,7 +31,7 @@ public class SnippetExtractorTests
         var input = @"
   #region CodeKey
   <configSections/>";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
+        var snippets = SnippetExtractor.FromText(input);
         ObjectApprover.VerifyWithJson(snippets);
     }
 
@@ -43,7 +42,7 @@ public class SnippetExtractorTests
   #region CodeKey
   The Code
   #endregion";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input,null);
+        var snippets = SnippetExtractor.FromText(input);
         ObjectApprover.VerifyWithJson(snippets);
     }
 
@@ -56,7 +55,7 @@ public class SnippetExtractorTests
   // startcode CodeKey
   the code
   // endcode ";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input,null);
+        var snippets = SnippetExtractor.FromText(input);
         ObjectApprover.VerifyWithJson(snippets);
     }
 
@@ -67,7 +66,7 @@ public class SnippetExtractorTests
   <!--startcode CodeKey-->
   <configSections/>
   <!--endcode-->";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
+        var snippets = SnippetExtractor.FromText(input);
         ObjectApprover.VerifyWithJson(snippets);
     }
     [Test]
@@ -77,7 +76,7 @@ public class SnippetExtractorTests
   // startcode CodeKey
   the code
   // endcode   ";
-        var snippets = SnippetExtractor.GetSnippetsFromText(input, null);
+        var snippets = SnippetExtractor.FromText(input);
         ObjectApprover.VerifyWithJson(snippets);
     }
 }
