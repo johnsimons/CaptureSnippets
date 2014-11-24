@@ -4,6 +4,7 @@
         "EndRow": 4,
         "Value": "the code",
         "Key": "codekey",
+        "Version": null,
         "Language": "",
         "File": null,
         "IsUnclosed": false

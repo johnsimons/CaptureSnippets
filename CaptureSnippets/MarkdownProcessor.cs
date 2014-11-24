@@ -26,11 +26,19 @@ namespace CaptureSnippets
         static ProcessResult Apply(List<Snippet> availableSnippets, TextReader reader)
         {
             var stringBuilder = new StringBuilder();
-            var lookup = new Dictionary<string, Snippet>(StringComparer.OrdinalIgnoreCase);
+            var lookup = new Dictionary<string, List<Snippet>>(StringComparer.OrdinalIgnoreCase);
             foreach (var snippet in availableSnippets)
             {
-                lookup[snippet.Key] = snippet;
+                if (!lookup.ContainsKey(snippet.Key))
+                {
+                    lookup[snippet.Key] = new List<Snippet> {snippet};
+                }
+                else
+                {
+                    lookup[snippet.Key].Add(snippet);
+                }
             }
+
             var result = new ProcessResult();
 
             string line;
@@ -64,8 +72,8 @@ namespace CaptureSnippets
                 {
                     continue;
                 }
-                Snippet codeSnippet;
-                if (!lookup.TryGetValue(key, out codeSnippet))
+                List<Snippet> codeSnippets;
+                if (!lookup.TryGetValue(key, out codeSnippets))
                 {
                     var missingSnippet = new MissingSnippet
                     {
@@ -76,23 +84,83 @@ namespace CaptureSnippets
                     stringBuilder.AppendLine(string.Format("** Could not find key '{0}' **", key));
                     continue;
                 }
-                var value = codeSnippet.Value;
 
-                if (codeSnippet.Language == null)
+                if (codeSnippets.Count == 1)
                 {
-                    stringBuilder.AppendLine("```");
+                    var codeSnippet = codeSnippets[0];
+                    AppendCodeSnippet(codeSnippet, stringBuilder);
+                    result.UsedSnippets.Add(codeSnippet);
                 }
                 else
                 {
-                    stringBuilder.AppendLine("```" + codeSnippet.Language);
+                    codeSnippets.Sort((s1, s2) => s1.Version.CompareTo(s2.Version));
+                    codeSnippets.Reverse();
+
+                    bool first = true;
+                    stringBuilder.AppendLine("<ul class=\"nav nav-tabs\" role=\"tablist\">");
+                    foreach (var codeSnippet in codeSnippets)
+                    {
+                        if (first)
+                        {
+                            stringBuilder.Append("<li role=\"presentation\" class=\"active\">");
+                            first = false;
+                        }
+                        else
+                        {
+                            stringBuilder.Append("<li role=\"presentation\">");
+                        }
+                        stringBuilder.AppendFormat(
+                            "<a href=\"#{0}\" aria-controls=\"{0}\" role=\"tab\" data-toggle=\"tab\">{1}</a></li>"
+                            , MakeTabId(codeSnippet), codeSnippet.Version.ToString(2));
+                    }
+                    stringBuilder.AppendLine("</ul>");
+
+                    first = true;
+                    stringBuilder.AppendLine("<div class=\"tab-content\">");
+                    foreach (var codeSnippet in codeSnippets)
+                    {
+                        stringBuilder.AppendLine(
+                            String.Format("<div role=\"tabpanel\" class=\"tab-pane {1}\" id=\"{0}\">",
+                            MakeTabId(codeSnippet), first ? "active" : String.Empty));
+                        AppendCodeSnippet(codeSnippet, stringBuilder);
+                        stringBuilder.AppendLine("</div>");
+                        first = false;
+                        result.UsedSnippets.Add(codeSnippet);
+                    }
+                    stringBuilder.AppendLine("</div>");
                 }
-                stringBuilder.AppendLine(value);
-                stringBuilder.AppendLine("```");
+
                 eatingCodePending = true;
-                result.UsedSnippets.Add(codeSnippet);
+
             }
             result.Text = stringBuilder.ToString().TrimTrailingNewLine();
             return result;
+        }
+
+        private static string MakeTabId(Snippet codeSnippet)
+        {
+            if (codeSnippet.Version.Minor > 0)
+            {
+                return string.Format("{0}{1}_{2}", codeSnippet.Key, codeSnippet.Version.Major, codeSnippet.Version.Minor);
+            }
+
+            return codeSnippet.Key + codeSnippet.Version.Major;
+        }
+
+        private static void AppendCodeSnippet(Snippet codeSnippet, StringBuilder stringBuilder)
+        {
+            var value = codeSnippet.Value;
+
+            if (codeSnippet.Language == null)
+            {
+                stringBuilder.AppendLine("<pre><code>");
+            }
+            else
+            {
+                stringBuilder.AppendLine("<pre><code class=\"" + codeSnippet.Language + "\">");
+            }
+            stringBuilder.AppendLine(value);
+            stringBuilder.AppendLine("</code></pre>");
         }
 
         public static bool TryExtractKeyFromLine(string line, out string key)

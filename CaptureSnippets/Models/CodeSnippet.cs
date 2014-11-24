@@ -1,3 +1,5 @@
+using System;
+
 namespace CaptureSnippets
 {
     public class Snippet
@@ -6,6 +8,7 @@ namespace CaptureSnippets
         public int EndRow;
         public string Value;
         public string Key;
+        public Version Version;
         public string Language;
         public string File;
         public bool IsUnclosed;

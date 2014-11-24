@@ -4,6 +4,7 @@
         "EndRow": 0,
         "Value": "SNIPPET WAS NOT CLOSED",
         "Key": "codekey",
+        "Version": null,
         "Language": "",
         "File": null,
         "IsUnclosed": true

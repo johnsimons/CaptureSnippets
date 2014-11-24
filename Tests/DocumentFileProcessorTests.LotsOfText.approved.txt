@@ -6,6 +6,7 @@
             "EndRow": 0,
             "Value": null,
             "Key": "FoundKey2",
+            "Version": null,
             "Language": null,
             "File": null,
             "IsUnclosed": false
@@ -15,6 +16,7 @@
             "EndRow": 0,
             "Value": null,
             "Key": "FoundKey1",
+            "Version": null,
             "Language": null,
             "File": null,
             "IsUnclosed": false
@@ -24,6 +26,7 @@
             "EndRow": 0,
             "Value": null,
             "Key": "FoundKey1",
+            "Version": null,
             "Language": null,
             "File": null,
             "IsUnclosed": false
@@ -33,6 +36,7 @@
             "EndRow": 0,
             "Value": null,
             "Key": "FoundKey1",
+            "Version": null,
             "Language": null,
             "File": null,
             "IsUnclosed": false
@@ -42,6 +46,7 @@
             "EndRow": 0,
             "Value": null,
             "Key": "FoundKey1",
+            "Version": null,
             "Language": null,
             "File": null,
             "IsUnclosed": false
@@ -51,6 +56,7 @@
             "EndRow": 0,
             "Value": null,
             "Key": "FoundKey1",
+            "Version": null,
             "Language": null,
             "File": null,
             "IsUnclosed": false
@@ -60,6 +66,7 @@
             "EndRow": 0,
             "Value": null,
             "Key": "FoundKey1",
+            "Version": null,
             "Language": null,
             "File": null,
             "IsUnclosed": false
@@ -69,6 +76,7 @@
             "EndRow": 0,
             "Value": null,
             "Key": "FoundKey1",
+            "Version": null,
             "Language": null,
             "File": null,
             "IsUnclosed": false
@@ -78,6 +86,7 @@
             "EndRow": 0,
             "Value": null,
             "Key": "FoundKey1",
+            "Version": null,
             "Language": null,
             "File": null,
             "IsUnclosed": false

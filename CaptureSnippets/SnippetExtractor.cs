@@ -58,6 +58,7 @@ namespace CaptureSnippets
         static IEnumerable<Snippet> GetSnippetsFromFile(TextReader stringReader)
         {
             string currentKey = null;
+            string version = null;
             var startLine = 0;
             var isInSnippet = false;
             List<string> snippetLines = null;
@@ -95,10 +96,12 @@ namespace CaptureSnippets
                             StartRow = startLine+1,
                             EndRow = lineNumber+2,
                             Key = currentKey,
+                            Version = version != null ? Version.Parse(version) : null,
                             Value = string.Join(LineEnding, snippetValue)
                         };
                         snippetLines = null;
                         currentKey = null;
+                        version = null;
                         continue;
                     }
                     snippetLines.Add(line);
@@ -113,7 +116,7 @@ namespace CaptureSnippets
                         snippetLines = new List<string>();
                         continue;
                     }
-                    if (IsStartRegion(trimmedLine, out currentKey))
+                    if (IsStartRegion(trimmedLine, out currentKey, out version))
                     {
                         endFunc = IsEndRegion;
                         isInSnippet = true;
@@ -159,21 +162,34 @@ namespace CaptureSnippets
             return false;
         }
 
-        static bool IsStartRegion(string line, out string key)
+        static bool IsStartRegion(string line, out string key, out string version)
         {
             var startCodeIndex = line.IndexOf("#region ", StringComparison.Ordinal);
+
+            version = null;
+
             if (startCodeIndex != -1)
             {
                 var startIndex = startCodeIndex + 8;
-                key = line.Substring(startIndex)
-                    .Trim();
-                if (string.IsNullOrWhiteSpace(key))
+                var splitBySpace = line.Substring(startIndex)
+                    .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (splitBySpace.Any())
                 {
-                    key = null;
-                    return false;
+                    key = splitBySpace.First();
+
+                    if (!string.IsNullOrWhiteSpace(key))
+                    {
+                        if (splitBySpace.Length > 1)
+                        {
+                            version = splitBySpace.Last();
+                        }
+
+                        return true;
+                    }
                 }
-                return true;
             }
+
             key = null;
             return false;
         }

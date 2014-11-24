@@ -39,7 +39,7 @@ public class SnippetExtractorTests
     public void CanExtractFromRegion()
     {
         var input = @"
-  #region CodeKey
+  #region CodeKey 4
   The Code
   #endregion";
         var snippets = SnippetExtractor.FromText(input);
